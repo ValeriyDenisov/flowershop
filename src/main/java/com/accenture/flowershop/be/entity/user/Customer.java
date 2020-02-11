@@ -2,20 +2,33 @@ package com.accenture.flowershop.be.entity.user;
 
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
 
-public class User extends AbstractEntity {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "customers")
+public class Customer extends AbstractEntity {
+
+    @Column(name = "name", unique = true)
     private String name;
 
+    @Column(name = "secondName", unique = true)
     private String secondName  ;
 
+    @Column(name = "fatherName", unique = true)
     private String fatherName;
 
+    @Column(name = "address", unique = true)
     private String address;
 
+    @Column(name = "telephone", unique = true)
     private String telephone;
 
+    @Column(name = "balance", unique = true)
     private double balance;
 
+    @Column(name = "discount", unique = true)
     private short discount;
 
     public void setName(String name) {
