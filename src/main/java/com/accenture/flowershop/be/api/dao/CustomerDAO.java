@@ -1,7 +1,7 @@
 package com.accenture.flowershop.be.api.dao;
 
-import com.accenture.flowershop.be.entity.user.Customer;
+import com.accenture.flowershop.be.entity.customer.Customer;
 
-public interface CustomerDAO {
-    Customer findById(int id);
+public interface CustomerDAO extends AbstractDAO<Customer> {
+    Customer findByPhone(String phone);
 }

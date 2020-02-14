@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS addresses
+(
+  id int(10) PRIMARY KEY AUTO_INCREMENT,
+  street VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  code int(10),
+  building VARCHAR(255) NOT NULL UNIQUE
+);
