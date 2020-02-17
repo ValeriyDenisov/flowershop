@@ -16,7 +16,15 @@ CREATE TABLE customers
   addressId int(10) NOT NULL,
   phone VARCHAR(255) NOT NULL UNIQUE,
   balance double NOT NULL,
-  discount smallint (3) NOT NULL
+  discount smallint (3) NOT NULL,
+  email varchar (255) NOT NULL, unique
+);
+
+create TABLE users
+(
+    id int(10) PRIMARY KEY AUTO_INCREMENT,
+    login VARCHAR(255) NOT NULL unique,
+    password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE orders

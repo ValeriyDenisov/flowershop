@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "customers")
 public class Customer extends AbstractEntity {
     public static final String PHONE = "phone";
+    public static final String EMAIL = "email";
 
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "addressId", nullable = false)
@@ -32,6 +33,17 @@ public class Customer extends AbstractEntity {
 
     @Column(name = "discount", nullable = false)
     private Short discount;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -112,15 +124,17 @@ public class Customer extends AbstractEntity {
         private String phone;
         private Double balance;
         private Short discount;
+        private String email;
 
         public Builder(String name, String secondName, Address address,
-                       String phone, Double balance, Short discount ) {
+                       String phone, Double balance, Short discount, String email) {
             this.name = name;
             this.secondName = secondName;
             this.address = address;
             this.phone = phone;
             this.balance = balance;
             this.discount = discount;
+            this.email = email;
         }
 
         public Builder id(Integer id) {
@@ -147,8 +161,10 @@ public class Customer extends AbstractEntity {
         this.phone = builder.phone;
         this.discount = builder.discount;
         this.balance = builder.balance;
+        this.email = builder.email;
     }
 
-    public Customer() {}
+    public Customer() {
+    }
 }
 

@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS customers
   addressId int(10) NOT NULL,
   phone VARCHAR(255) NOT NULL UNIQUE,
   balance double NOT NULL,
-  discount smallint (3) NOT NULL
+  discount smallint (3) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS orders

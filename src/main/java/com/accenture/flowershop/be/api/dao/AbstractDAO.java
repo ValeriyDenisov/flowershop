@@ -1,8 +1,10 @@
 package com.accenture.flowershop.be.api.dao;
 
+import com.accenture.flowershop.be.entity.common.AbstractEntity;
+
 import java.util.List;
 
-public interface AbstractDAO<T> {
+public interface AbstractDAO<T extends AbstractEntity> {
 
     T findById(Integer id);
 
@@ -13,4 +15,6 @@ public interface AbstractDAO<T> {
     void update (T object);
 
     List<T> findAll();
+
+    T findByUniqueElement(Object value, String elementName);
 }

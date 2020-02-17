@@ -22,7 +22,9 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     public static final String ERROR_CUSTOMER_PHONE_EMPTY = "Поле phone пользователя пусто!";
     public static final String ERROR_CUSTOMER_BALANCE_NULL = "Поле balance пользователя пусто!";
     public static final String ERROR_CUSTOMER_DISCOUNT_NULL = "Поле discount пользователя пусто!";
+    public static final String ERROR_CUSTOMER_DISCOUNT_EMAIL = "Поле email пользователя пусто!";
     public static final String ERROR_CUSTOMER_EXISTS_BY_PHONE = "Пользователь с телефоном:{0} уже существует!";
+    public static final String ERROR_CUSTOMER_EXISTS_BY_EMAIL = "Пользователь с email:{0} уже существует!";
 
     @Autowired
     CustomerDAO customerDAO;
@@ -37,28 +39,33 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     }
 
     public void insertCustomer(String name, String secondName, String fatherName, Integer addressId,
-                               String phone, Double balance, Short discount) {
+                               String phone, Double balance, Short discount, String email) {
         CommonUtils.assertEmpty(name, ERROR_CUSTOMER_NAME_EMPTY);
         CommonUtils.assertEmpty(secondName, ERROR_CUSTOMER_SECOND_NAME_EMPTY);
         CommonUtils.assertNull(addressId, ERROR_CUSTOMER_ADDRESS_NULL);
         CommonUtils.assertEmpty(phone, ERROR_CUSTOMER_PHONE_EMPTY);
         CommonUtils.assertNull(balance, ERROR_CUSTOMER_BALANCE_NULL);
         CommonUtils.assertNull(discount, ERROR_CUSTOMER_DISCOUNT_NULL);
-
+        CommonUtils.assertEmpty(email, ERROR_CUSTOMER_DISCOUNT_NULL);
 
         if (isCustomerExistsByPhone(phone)) {
             throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
+        }
+        if (isCustomerExistsByEmail(email)) {
+            throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
         }
         Address address = addressService.findAddressById(addressId);
         if (address == null) {
             throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
         }
 
-        Customer customer = createCustomer(name, secondName, fatherName, address, phone, balance, discount);
+
+        Customer customer = createCustomer(name, secondName, fatherName, address, phone, balance, discount, email);
         customerDAO.insert(customer);
     }
 
-    public void updateCustomer(Integer customerId, String name, String secondName, String fatherName, Integer addressId, String phone, Double balance, Short discount) {
+    public void updateCustomer(Integer customerId, String name, String secondName, String fatherName, Integer addressId,
+                               String phone, Double balance, Short discount, String email) {
         CommonUtils.assertNull(customerId, ERROR_ENTITY_ID_NULL);
         CommonUtils.assertEmpty(name, ERROR_CUSTOMER_NAME_EMPTY);
         CommonUtils.assertEmpty(secondName, ERROR_CUSTOMER_SECOND_NAME_EMPTY);
@@ -66,6 +73,8 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
         CommonUtils.assertEmpty(phone, ERROR_CUSTOMER_PHONE_EMPTY);
         CommonUtils.assertNull(balance, ERROR_CUSTOMER_BALANCE_NULL);
         CommonUtils.assertNull(discount, ERROR_CUSTOMER_DISCOUNT_NULL);
+        CommonUtils.assertEmpty(email, ERROR_CUSTOMER_DISCOUNT_EMAIL);
+
 
         Customer customer = findCustomerById(customerId);
         if (customer == null) {
@@ -80,6 +89,17 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
                 throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
             }
         }
+        if (!customer.getPhone().equalsIgnoreCase(phone)) {
+            if (isCustomerExistsByPhone(phone)) {
+                throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
+            }
+        }
+        if (!customer.getEmail().equalsIgnoreCase(email)) {
+            if (isCustomerExistsByEmail(email)) {
+                throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
+            }
+        }
+
 
         customer.setAddress(address);
         customer.setBalance(balance);
@@ -105,7 +125,13 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     public Customer findCustomerByPhone(String phone) {
         CommonUtils.assertEmpty(phone, ERROR_CUSTOMER_PHONE_EMPTY);
 
-        return customerDAO.findByPhone(phone);
+        return customerDAO.findByUniqueElement(phone, Customer.PHONE);
+    }
+
+    public Customer findCustomerByEmail(String email) {
+        CommonUtils.assertEmpty(email, ERROR_CUSTOMER_PHONE_EMPTY);
+
+        return customerDAO.findByUniqueElement(email, Customer.EMAIL);
     }
 
     public List<Customer> findAllCustomers() {
@@ -113,12 +139,16 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     }
 
     private Customer createCustomer(String name, String secondName, String fatherName,
-                                    Address address, String phone, Double balance, Short discount)  {
-        return new Customer.Builder(name, secondName, address, phone, balance, discount).fatherName(fatherName).build();
+                                    Address address, String phone, Double balance, Short discount, String email)  {
+        return new Customer.Builder(name, secondName, address, phone, balance, discount, email).fatherName(fatherName).build();
     }
 
     private boolean isCustomerExistsByPhone(String phone) {
         return findCustomerByPhone(phone) != null;
+    }
+
+    private boolean isCustomerExistsByEmail(String email) {
+        return findCustomerByEmail(email) != null;
     }
 
     private boolean isNotCustomerExistsByPhone(String phone) {

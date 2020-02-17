@@ -14,16 +14,4 @@ public class FlowerDAOImpl extends AbstractDAOImpl<Flower> implements FlowerDAO 
     protected Class<Flower> getType() {
         return Flower.class;
     }
-
-    public Flower findByName(String name) {
-        String query = MessageFormat.format(SELECT_BY_UNIQUE_ELEMENT_QUERY, getType().getSimpleName(), Flower.NAME);
-        TypedQuery<Flower> selectQuery = entityManager.createQuery(query, getType());
-        selectQuery.setParameter(Flower.NAME, name);
-        try {
-            return selectQuery.getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
-
-    }
 }

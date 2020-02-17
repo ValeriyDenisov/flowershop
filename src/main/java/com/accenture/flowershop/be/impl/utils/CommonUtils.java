@@ -2,7 +2,7 @@ package com.accenture.flowershop.be.impl.utils;
 
 import org.springframework.util.StringUtils;
 
-public class CommonUtils {
+public abstract class CommonUtils {
 
     public static void assertNull(Object value, String msg) {
         if (value == null) {
@@ -20,9 +20,5 @@ public class CommonUtils {
         if (StringUtils.isEmpty(value)) {
             throw new IllegalArgumentException(message);
         }
-    }
-
-    private CommonUtils() {
-
     }
 }

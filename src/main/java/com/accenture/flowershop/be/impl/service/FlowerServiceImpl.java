@@ -24,7 +24,7 @@ public class FlowerServiceImpl extends AbstractServiceImpl<Flower> implements Fl
     public Flower findFlowerByName(String name) {
         CommonUtils.assertEmpty(name, ERROR_FLOWER_NAME_EMPTY);
 
-        return flowerDAO.findByName(name);
+        return flowerDAO.findByUniqueElement(name, Flower.NAME);
     }
 
     public Flower findFlowerById(Integer id) {

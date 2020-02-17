@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS customers
   addressId int(10) NOT NULL,
   phone VARCHAR(255) NOT NULL UNIQUE,
   balance double NOT NULL,
-  discount smallint (3) NOT NULL
+  discount smallint (3) NOT NULL,
+  email varchar (255) NOT NULL unique
 );
 
 ALTER TABLE customers ADD CONSTRAINT fk_customers_addresses FOREIGN KEY (addressId) REFERENCES addresses(id)
