@@ -23,14 +23,20 @@
     </bean>
 
 
+
     <bean id="entityManager" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceProviderClass"
                   value="org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="com.accenture.flowershop.be.entity"/>
+        <property name="mappingResources">
+            <list>
+                <value>/jpa/orm.xml</value>
+            </list>
+        </property>
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.ddl-auto" value="${test.hibernate.ddl-auto}"/>
+                <entry key="hibernate.hbm2ddl.auto" value="${test.hibernate.hbm2ddl.auto.test}"/>
                 <entry key="hibernate.dialect" value="${test.hibernate.dialect}"/>
             </map>
         </property>

@@ -7,22 +7,18 @@ import com.accenture.flowershop.be.api.service.OrderService;
 import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
+import com.accenture.flowershop.be.impl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl extends AbstractServiceImpl<Order> implements OrderService {
-    public static final String ERROR_ORDER_PRICE_NULL = "Поле price заказа пусто!";
-    public static final String ERROR_ORDER_OPED_DATE_NULL = "Поле openDate заказа пусто!";
-    public static final String ERROR_ORDER_CLOSE_DATE_NULL = "Поле closeDate заказа пусто!";
-    public static final String ERROR_ORDER_IS_ACTIVE_NULL = "Поле isActive заказа пусто!";
-    public static final String ERROR_ORDER_CUSTOMER_NULL = "Поле customer заказа пусто!";
-
     @Autowired
     OrderDAO orderDAO;
 
@@ -35,11 +31,8 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         return orderDAO.findById(id);
     }
 
-    public void insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
-        CommonUtils.assertNull(customerId, ERROR_ENTITY_ID_NULL);
-        CommonUtils.assertNull(price, ERROR_ORDER_PRICE_NULL);
-        CommonUtils.assertNull(isActive, ERROR_ORDER_IS_ACTIVE_NULL);
-        CommonUtils.assertNull(openDate, ERROR_ORDER_OPED_DATE_NULL);
+    public Integer insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
+        CommonUtils.assertValues(getOrderFieldsValues(null, customerId, price, openDate, closeDate, isActive));
 
         Customer customer = customerDAO.findById(customerId);
         if (customer == null) {
@@ -48,15 +41,12 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
 
         Order order = createOrder(customer, price, isActive, openDate, closeDate);
         orderDAO.insert(order);
+        return order.getId();
     }
 
     public void updateOrder(Integer orderId, Integer customerId, Double price,
                             Boolean isActive, Calendar openDate, Calendar closeDate) {
-        CommonUtils.assertNull(customerId, ERROR_ORDER_CUSTOMER_NULL);
-        CommonUtils.assertNull(orderId, ERROR_ENTITY_ID_NULL);
-        CommonUtils.assertNull(price, ERROR_ORDER_PRICE_NULL);
-        CommonUtils.assertNull(isActive, ERROR_ORDER_IS_ACTIVE_NULL);
-        CommonUtils.assertNull(openDate, ERROR_ORDER_OPED_DATE_NULL);
+        CommonUtils.assertValues(getOrderFieldsValues(orderId, customerId, price, openDate, closeDate, isActive));
 
         Order order = findOrderById(orderId);
         if (order == null) {
@@ -92,5 +82,24 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
 
     private Order createOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
         return new Order.Builder(customer, price, isActive, openDate).closeDate(closeDate).build();
+    }
+
+    private Map<String, Object> getOrderFieldsValues(Integer id, Integer customerId, Double price, Calendar openDate,
+                                                     Calendar closeDate, Boolean isActive) {
+        Map<String, Object> fieldsValues = new HashMap<String, Object>();
+
+        if (id != null) {
+            fieldsValues.put(Constants.ENTITY_ID, id);
+        }
+        fieldsValues.put(Constants.ORDER_CUSTOMER, customerId);
+        fieldsValues.put(Constants.ORDER_PRICE, price);
+        fieldsValues.put(Constants.ORDER_OPEN_DATE, openDate);
+        if (closeDate != null) {
+            fieldsValues.put(Constants.ORDER_CLOSE_DATE, closeDate);
+        }
+        fieldsValues.put(Constants.ORDER_IS_ACTIVE, isActive);
+
+        return fieldsValues;
+
     }
 }

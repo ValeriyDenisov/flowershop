@@ -17,7 +17,7 @@ CREATE TABLE customers
   phone VARCHAR(255) NOT NULL UNIQUE,
   balance double NOT NULL,
   discount smallint (3) NOT NULL,
-  email varchar (255) NOT NULL, unique
+  email varchar (255) NOT NULL unique
 );
 
 create TABLE users

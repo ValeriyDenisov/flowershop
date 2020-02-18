@@ -3,13 +3,12 @@ package com.accenture.flowershop.fe.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class MainPageController {
+public class LoginPageController {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String mainPage() {
-        return "mainPage";
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String loginPage() {
+        return "loginPage";
     }
 }

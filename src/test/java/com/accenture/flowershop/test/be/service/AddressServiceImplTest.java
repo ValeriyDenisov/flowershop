@@ -13,7 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.text.MessageFormat;
 
-public class AddressServiceImplTest extends AbstractTest<Address> {
+public class AddressServiceImplTest extends AbstractTest {
     public static final String ADDRESS_TABLE_NAME = "addresses";
     public static final String ADDRESS_STREET_1 = "street_1";
     public static final String ADDRESS_CITY_1 = "city_1";
@@ -26,21 +26,6 @@ public class AddressServiceImplTest extends AbstractTest<Address> {
 
     @Autowired
     AddressService addressService;
-
-    @Override
-    protected void init() {
-
-    }
-
-    @Override
-    protected String getTableName() {
-        return ADDRESS_TABLE_NAME;
-    }
-
-    @Override
-    protected Class<Address> getType() {
-        return Address.class;
-    }
 
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",

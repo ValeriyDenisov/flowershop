@@ -8,7 +8,7 @@ public interface CustomerService {
 
     Customer findCustomerById(Integer id);
 
-    void insertCustomer(String name, String secondName, String fatherName,
+    Integer insertCustomer(String name, String secondName, String fatherName,
                         Integer addressId, String phone, Double balance, Short discount, String email);
 
     void updateCustomer(Integer customerId, String name, String secondName, String fatherName,

@@ -8,6 +8,18 @@
     <artifactId>flowershop</artifactId>
     <packaging>war</packaging>
     <version>0.01</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <properties>
         <spring-version>5.2.2.RELEASE</spring-version>
@@ -17,6 +29,8 @@
         <jstl-version>1.2</jstl-version>
         <mysql-connector-java-version>8.0.19</mysql-connector-java-version>
         <h2-version>1.4.200</h2-version>
+        <validation-api>2.0.1.Final</validation-api>
+        <hiberante-validator-version>6.0.17.Final</hiberante-validator-version>
     </properties>
 
     <dependencies>
@@ -70,6 +84,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hiberante-validator-version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit-version}</version>
@@ -101,5 +121,10 @@
             <version>${spring-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${validation-api}</version>
+        </dependency>
     </dependencies>
 </project>

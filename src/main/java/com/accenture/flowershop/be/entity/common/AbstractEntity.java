@@ -7,7 +7,7 @@ import javax.persistence.*;
 public abstract class AbstractEntity {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 

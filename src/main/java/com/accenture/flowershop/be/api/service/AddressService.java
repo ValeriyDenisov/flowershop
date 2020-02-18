@@ -5,7 +5,7 @@ import com.accenture.flowershop.be.entity.address.Address;
 import java.util.List;
 
 public interface AddressService {
-    void insertAddress(String street, String city, Integer code, Integer building);
+    Integer insertAddress(String street, String city, Integer code, Integer building);
 
     void deleteAddress(Integer id);
 

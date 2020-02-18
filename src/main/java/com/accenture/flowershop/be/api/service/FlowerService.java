@@ -11,7 +11,7 @@ public interface FlowerService {
 
     List<Flower> findAllFlower();
 
-    void insertFlower(String name, Double price, Integer quantityInStock);
+    Integer insertFlower(String name, Double price, Integer quantityInStock);
 
     void updateFlower(Integer flowerId, String name, Double price, Integer quantityInStock);
 

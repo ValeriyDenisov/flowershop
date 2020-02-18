@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-public class CustomerServiceImplTest extends AbstractTest<Customer> {
+public class CustomerServiceImplTest extends AbstractTest {
     public static final String CUSTOMER_TABLE_NAME = "customers";
     public static final String CUSTOMER_NAME_1 = "name_1";
     public static final String CUSTOMER_SECOND_NAME_1 = "secondName_1";
@@ -30,21 +30,6 @@ public class CustomerServiceImplTest extends AbstractTest<Customer> {
 
     @Autowired
     CustomerService customerService;
-
-    @Override
-    protected String getTableName() {
-        return CUSTOMER_TABLE_NAME;
-    }
-
-    @Override
-    protected Class<Customer> getType() {
-        return Customer.class;
-    }
-
-    @Override
-    protected void init() {
-
-    }
 
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",

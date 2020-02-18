@@ -63,7 +63,7 @@ public class Order extends AbstractEntity {
         this.closeDate = closeDate;
     }
 
-    public boolean isActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 

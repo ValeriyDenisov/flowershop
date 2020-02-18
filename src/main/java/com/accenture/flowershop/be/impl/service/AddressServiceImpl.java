@@ -6,30 +6,27 @@ import com.accenture.flowershop.be.api.service.AddressService;
 import com.accenture.flowershop.be.entity.address.Address;
 import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
+import com.accenture.flowershop.be.impl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AddressServiceImpl extends AbstractServiceImpl<Address> implements AddressService {
-    public static final String ERROR_ADDRESS_STREET_EMPTY = "Поле street адресса пусто!";
-    public static final String ERROR_ADDRESS_CITY_EMPTY = "Поле city адресса пусто!";
-    public static final String ERROR_ADDRESS_CODE_NULL = "Поле code адресса пусто!";
-    public static final String ERROR_ADDRESS_BUILDING_NULL = "Поле building адресса пусто!";
 
     @Autowired
     AddressDAO addressDAO;
 
-    public void insertAddress(String street, String city, Integer code, Integer building) {
-        CommonUtils.assertEmpty(street, ERROR_ADDRESS_STREET_EMPTY);
-        CommonUtils.assertEmpty(city, ERROR_ADDRESS_CITY_EMPTY);
-        CommonUtils.assertPrimitiveIntNull(code, ERROR_ADDRESS_CODE_NULL);
-        CommonUtils.assertPrimitiveIntNull(building, ERROR_ADDRESS_BUILDING_NULL);
+    public Integer insertAddress(String street, String city, Integer code, Integer building) {
+       CommonUtils.assertValues(getAddressFieldsValues(null, street, city, code, building));
 
         Address address = createAddress(street, city, code, building);
         addressDAO.insert(address);
+        return address.getId();
     }
 
     public void deleteAddress(Integer id) {
@@ -44,11 +41,7 @@ public class AddressServiceImpl extends AbstractServiceImpl<Address> implements 
     }
 
     public void updateAddress(Integer id, String street, String city, Integer code, Integer building) {
-        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
-        CommonUtils.assertEmpty(street, ERROR_ADDRESS_STREET_EMPTY);
-        CommonUtils.assertEmpty(city, ERROR_ADDRESS_CITY_EMPTY);
-        CommonUtils.assertPrimitiveIntNull(code, ERROR_ADDRESS_CODE_NULL);
-        CommonUtils.assertPrimitiveIntNull(building, ERROR_ADDRESS_BUILDING_NULL);
+        CommonUtils.assertValues(getAddressFieldsValues(id, street, city, code, building));
 
         Address address = findAddressById(id);
         if (address == null) {
@@ -80,5 +73,20 @@ public class AddressServiceImpl extends AbstractServiceImpl<Address> implements 
     private boolean isAddressExist(Integer id) {
         Address address = addressDAO.findById(id);
         return address != null;
+    }
+
+    private Map<String, Object> getAddressFieldsValues(Integer id, String street,
+                                                       String city, Integer code, Integer building) {
+        Map<String, Object> fieldsValues = new HashMap<String, Object>();
+
+        if (id != null) {
+            fieldsValues.put(Constants.ENTITY_ID, id);
+        }
+        fieldsValues.put(Constants.ADDRESS_STREET, street);
+        fieldsValues.put(Constants.ADDRESS_CITY, city);
+        fieldsValues.put(Constants.ADDRESS_CODE, code);
+        fieldsValues.put(Constants.ADDRESS_BUILDING, building);
+
+        return fieldsValues;
     }
 }

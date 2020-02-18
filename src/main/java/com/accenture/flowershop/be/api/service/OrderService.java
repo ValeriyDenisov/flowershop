@@ -9,7 +9,7 @@ public interface OrderService {
 
     Order findOrderById(Integer id);
 
-    void insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate);
+    Integer insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate);
 
     void updateOrder(Integer orderId, Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate);
 

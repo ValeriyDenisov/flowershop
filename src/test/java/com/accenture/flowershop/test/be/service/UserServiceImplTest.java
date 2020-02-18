@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-public class UserServiceImplTest extends AbstractTest<User> {
+public class UserServiceImplTest extends AbstractTest {
     public static final String USER_TABLE_NAME = "users";
     public static final String USER_NAME_1 = "name_1";
     public static final String USER_PASSWORD_1 = "password_1";
@@ -17,21 +17,6 @@ public class UserServiceImplTest extends AbstractTest<User> {
 
     @Autowired
     UserService userService;
-
-    @Override
-    protected String getTableName() {
-        return USER_TABLE_NAME;
-    }
-
-    @Override
-    protected Class<User> getType() {
-        return User.class;
-    }
-
-    @Override
-    protected void init() {
-
-    }
 
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",

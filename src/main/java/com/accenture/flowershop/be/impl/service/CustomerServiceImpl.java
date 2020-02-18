@@ -7,24 +7,20 @@ import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.entity.address.Address;
 import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
+import com.accenture.flowershop.be.impl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 
 @Service
 public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implements CustomerService {
-    public static final String ERROR_CUSTOMER_NAME_EMPTY = "Поле name пользователя пусто!";
-    public static final String ERROR_CUSTOMER_SECOND_NAME_EMPTY = "Поле secondName пользователя пусто!";
-    public static final String ERROR_CUSTOMER_ADDRESS_NULL = "Поле address пользователя пусто!";
-    public static final String ERROR_CUSTOMER_PHONE_EMPTY = "Поле phone пользователя пусто!";
-    public static final String ERROR_CUSTOMER_BALANCE_NULL = "Поле balance пользователя пусто!";
-    public static final String ERROR_CUSTOMER_DISCOUNT_NULL = "Поле discount пользователя пусто!";
-    public static final String ERROR_CUSTOMER_DISCOUNT_EMAIL = "Поле email пользователя пусто!";
-    public static final String ERROR_CUSTOMER_EXISTS_BY_PHONE = "Пользователь с телефоном:{0} уже существует!";
-    public static final String ERROR_CUSTOMER_EXISTS_BY_EMAIL = "Пользователь с email:{0} уже существует!";
+    public static final String ERROR_CUSTOMER_EXISTS_BY_PHONE = "Customer with phone: {0} already exists!";
+    public static final String ERROR_CUSTOMER_EXISTS_BY_EMAIL = "Customer with email: {0} already exists!";
 
     @Autowired
     CustomerDAO customerDAO;
@@ -38,15 +34,10 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
         return customerDAO.findById(id);
     }
 
-    public void insertCustomer(String name, String secondName, String fatherName, Integer addressId,
+    public Integer insertCustomer(String name, String secondName, String fatherName, Integer addressId,
                                String phone, Double balance, Short discount, String email) {
-        CommonUtils.assertEmpty(name, ERROR_CUSTOMER_NAME_EMPTY);
-        CommonUtils.assertEmpty(secondName, ERROR_CUSTOMER_SECOND_NAME_EMPTY);
-        CommonUtils.assertNull(addressId, ERROR_CUSTOMER_ADDRESS_NULL);
-        CommonUtils.assertEmpty(phone, ERROR_CUSTOMER_PHONE_EMPTY);
-        CommonUtils.assertNull(balance, ERROR_CUSTOMER_BALANCE_NULL);
-        CommonUtils.assertNull(discount, ERROR_CUSTOMER_DISCOUNT_NULL);
-        CommonUtils.assertEmpty(email, ERROR_CUSTOMER_DISCOUNT_NULL);
+        CommonUtils.assertValues(getCustomerFieldsValues(null, name, secondName, fatherName, addressId,
+                phone, balance, discount, email));
 
         if (isCustomerExistsByPhone(phone)) {
             throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
@@ -62,19 +53,13 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
 
         Customer customer = createCustomer(name, secondName, fatherName, address, phone, balance, discount, email);
         customerDAO.insert(customer);
+        return customer.getId();
     }
 
     public void updateCustomer(Integer customerId, String name, String secondName, String fatherName, Integer addressId,
                                String phone, Double balance, Short discount, String email) {
-        CommonUtils.assertNull(customerId, ERROR_ENTITY_ID_NULL);
-        CommonUtils.assertEmpty(name, ERROR_CUSTOMER_NAME_EMPTY);
-        CommonUtils.assertEmpty(secondName, ERROR_CUSTOMER_SECOND_NAME_EMPTY);
-        CommonUtils.assertNull(addressId, ERROR_CUSTOMER_ADDRESS_NULL);
-        CommonUtils.assertEmpty(phone, ERROR_CUSTOMER_PHONE_EMPTY);
-        CommonUtils.assertNull(balance, ERROR_CUSTOMER_BALANCE_NULL);
-        CommonUtils.assertNull(discount, ERROR_CUSTOMER_DISCOUNT_NULL);
-        CommonUtils.assertEmpty(email, ERROR_CUSTOMER_DISCOUNT_EMAIL);
-
+       CommonUtils.assertValues(getCustomerFieldsValues(customerId, name, secondName, fatherName, addressId, phone,
+               balance, discount, email));
 
         Customer customer = findCustomerById(customerId);
         if (customer == null) {
@@ -100,7 +85,6 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
             }
         }
 
-
         customer.setAddress(address);
         customer.setBalance(balance);
         customer.setDiscount(discount);
@@ -123,13 +107,13 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     }
 
     public Customer findCustomerByPhone(String phone) {
-        CommonUtils.assertEmpty(phone, ERROR_CUSTOMER_PHONE_EMPTY);
+        CommonUtils.assertEmpty(phone, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.CUSTOMER_PHONE));
 
         return customerDAO.findByUniqueElement(phone, Customer.PHONE);
     }
 
     public Customer findCustomerByEmail(String email) {
-        CommonUtils.assertEmpty(email, ERROR_CUSTOMER_PHONE_EMPTY);
+        CommonUtils.assertEmpty(email, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.CUSTOMER_EMAIL));
 
         return customerDAO.findByUniqueElement(email, Customer.EMAIL);
     }
@@ -151,8 +135,25 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
         return findCustomerByEmail(email) != null;
     }
 
-    private boolean isNotCustomerExistsByPhone(String phone) {
-        return findCustomerByPhone(phone) == null;
-    }
+    private Map<String, Object> getCustomerFieldsValues(Integer id, String name, String secondName,
+                                                        String fatherName, Integer addressId, String phone,
+                                                        Double balance, Short discount, String email) {
+        Map<String, Object> fieldsValues = new HashMap<>();
 
+        if (id != null) {
+            fieldsValues.put(Constants.ENTITY_ID, id);
+        }
+        fieldsValues.put(Constants.CUSTOMER_NAME, name);
+        fieldsValues.put(Constants.CUSTOMER_SECOND_NAME, secondName);
+        if (!StringUtils.isEmpty(fatherName)) {
+            fieldsValues.put(Constants.CUSTOMER_FATHER_NAME, fatherName);
+        }
+        fieldsValues.put(Constants.CUSTOMER_ADDRESS, addressId);
+        fieldsValues.put(Constants.CUSTOMER_PHONE, phone);
+        fieldsValues.put(Constants.CUSTOMER_BALANCE, balance);
+        fieldsValues.put(Constants.CUSTOMER_DISCOUNT, discount);
+        fieldsValues.put(Constants.CUSTOMER_EMAIL, email);
+
+        return fieldsValues;
+    }
 }

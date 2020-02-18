@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class OrderServiceImplTest extends AbstractTest<Order> {
+public class OrderServiceImplTest extends AbstractTest {
     public static final String ORDER_TABLE_NAME = "orders";
     public static final Double ORDER_PRICE_1 = 111.11;
     public static final Integer ORDER_ID_1 = 1;
@@ -28,21 +28,6 @@ public class OrderServiceImplTest extends AbstractTest<Order> {
 
     @Autowired
     OrderService orderService;
-
-    @Override
-    protected String getTableName() {
-        return ORDER_TABLE_NAME;
-    }
-
-    @Override
-    protected Class<Order> getType() {
-        return Order.class;
-    }
-
-    @Override
-    protected void init() {
-
-    }
 
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",

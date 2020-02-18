@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-public class FlowerServiceImplTest extends AbstractTest<Flower> {
+public class FlowerServiceImplTest extends AbstractTest {
     public static final String FLOWER_TABLE_NAME = "flowers";
     public static final String FLOWER_NAME_1 = "name_1";
     public static final Double FLOWER_PRICE_1 = 111.11;
@@ -19,20 +19,6 @@ public class FlowerServiceImplTest extends AbstractTest<Flower> {
 
     @Autowired
     FlowerService flowerService;
-
-    @Override
-    protected String getTableName() {
-        return FLOWER_TABLE_NAME;
-    }
-
-    @Override
-    protected Class<Flower> getType() {
-        return Flower.class;
-    }
-
-    @Override
-    protected void init() {
-    }
 
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",
