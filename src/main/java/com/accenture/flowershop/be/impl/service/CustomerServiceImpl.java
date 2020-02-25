@@ -107,13 +107,13 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     }
 
     public Customer findCustomerByPhone(String phone) {
-        CommonUtils.assertEmpty(phone, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.CUSTOMER_PHONE));
+        CommonUtils.assertEmpty(phone, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_PHONE));
 
         return customerDAO.findByUniqueElement(phone, Customer.PHONE);
     }
 
     public Customer findCustomerByEmail(String email) {
-        CommonUtils.assertEmpty(email, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.CUSTOMER_EMAIL));
+        CommonUtils.assertEmpty(email, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_EMAIL));
 
         return customerDAO.findByUniqueElement(email, Customer.EMAIL);
     }

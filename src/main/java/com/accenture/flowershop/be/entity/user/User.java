@@ -1,6 +1,6 @@
 package com.accenture.flowershop.be.entity.user;
 
-import com.accenture.flowershop.be.impl.utils.Constants;
+import com.accenture.flowershop.be.entity.enums.Role;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -10,12 +10,11 @@ import javax.persistence.Table;
 public class User extends AbstractUser {
     public User() {
         super();
-        this.role = Constants.ROLE_USER;
+        this.role = Role.USER;
     }
 
     public User(String login, String password) {
         super(login, password);
-        this.role = Constants.ROLE_USER;
+        this.role = Role.USER;
     }
-
 }

@@ -13,19 +13,19 @@ import java.util.Map;
 public class Order extends AbstractEntity {
 
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    @JoinColumn(name = "customerId", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "openDate")
+    @Column(name = "open_date")
     private Calendar openDate;
 
-    @Column(name = "closeDate")
+    @Column(name = "close_date")
     private Calendar closeDate;
 
-    @Column(name = "isActive")
+    @Column(name = "is_active")
     private Boolean isActive;
 
     @Transient

@@ -1,7 +1,8 @@
 package com.accenture.flowershop.be.impl.utils;
 
 public abstract class Constants {
-    public static final String ERROR_ENTITY_FIELD_NULL_OR_EMPTY = "Field {0} null or empty";
+    public static final String ERROR_ENTITY_FIELD_NULL = "Field {0} is null";
+    public static final String ERROR_ENTITY_FIELD_EMPTY = "Field {0} empty";
 
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_USER = "USER";

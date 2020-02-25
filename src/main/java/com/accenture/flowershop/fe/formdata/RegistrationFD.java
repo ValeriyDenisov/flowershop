@@ -45,7 +45,7 @@ public class RegistrationFD {
     @Size(max = 255, message = "Password is to long")
     private String password;
 
-    @NotBlank(message = "Enter confirmation password")
+    @NotBlank(message = "Confirm password")
     @Size(max = 255, message = "Password is to long")
     private String confirmPassword;
 

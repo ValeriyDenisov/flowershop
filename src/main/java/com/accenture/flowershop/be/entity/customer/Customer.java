@@ -13,16 +13,16 @@ public class Customer extends AbstractEntity {
     public static final String EMAIL = "email";
 
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    @JoinColumn(name = "addressId", nullable = false)
+    @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "secondName", nullable = false)
+    @Column(name = "second_name", nullable = false)
     private String secondName;
 
-    @Column(name = "fatherName")
+    @Column(name = "father_name")
     private String fatherName;
 
     @Column(name = "phone", unique = true, nullable = false)

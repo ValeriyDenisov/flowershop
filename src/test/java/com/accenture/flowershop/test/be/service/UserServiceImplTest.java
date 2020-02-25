@@ -2,6 +2,7 @@ package com.accenture.flowershop.test.be.service;
 
 import com.accenture.flowershop.be.api.exceptions.EntityException;
 import com.accenture.flowershop.be.api.service.UserService;
+import com.accenture.flowershop.be.entity.enums.Role;
 import com.accenture.flowershop.be.entity.user.User;
 import com.accenture.flowershop.test.be.AbstractTest;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class UserServiceImplTest extends AbstractTest {
             "/sql/user/create_user_table.sql",
             "/sql/user/insert_user.sql"})
     public void updateUserExistsByLogin() {
-        userService.updateUser(1, USER_NAME_2, null);
+        userService.updateUser(1, USER_NAME_2, USER_PASSWORD_1);
     }
 
 }

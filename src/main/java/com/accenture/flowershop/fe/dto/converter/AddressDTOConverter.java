@@ -5,24 +5,24 @@ import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
 import com.accenture.flowershop.fe.dto.entity.AbstractDTO;
 import com.accenture.flowershop.fe.dto.entity.AddressDTO;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.Map;
 
-public class AddressDTOConverter extends AbstractDTOConverter<Address> {
+@Component
+public class AddressDTOConverter extends AbstractDTOConverter<AddressDTO, Address> {
 
-    public static AddressDTO convert(Address address) {
-        CommonUtils.assertNull(address, MessageFormat.format(ERROR_ENTITY_NULL, Constants.ENTITY_ADDRESS));
+    @Override
+    public AddressDTO convert(Address entity) {
+        CommonUtils.assertNull(entity, MessageFormat.format(ERROR_ENTITY_NULL, Constants.ENTITY_ADDRESS));
 
         AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setId(address.getId());
-        addressDTO.setBuilding(address.getBuilding());
-        addressDTO.setCity(address.getCity());
-        addressDTO.setStreet(address.getStreet());
-        addressDTO.setCode(address.getCode());
-
+        addressDTO.setId(entity.getId());
+        addressDTO.setBuilding(entity.getBuilding());
+        addressDTO.setCity(entity.getCity());
+        addressDTO.setStreet(entity.getStreet());
+        addressDTO.setCode(entity.getCode());
         return addressDTO;
     }
-
-    private AddressDTOConverter() {}
 }

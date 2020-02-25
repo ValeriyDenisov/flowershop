@@ -22,7 +22,7 @@ public class FlowerServiceImpl extends AbstractServiceImpl<Flower> implements Fl
     FlowerDAO flowerDAO;
 
     public Flower findFlowerByName(String name) {
-        CommonUtils.assertEmpty(name, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.FLOWER_NAME));
+        CommonUtils.assertEmpty(name, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.FLOWER_NAME));
 
         return flowerDAO.findByUniqueElement(name, Flower.NAME);
     }
@@ -77,6 +77,11 @@ public class FlowerServiceImpl extends AbstractServiceImpl<Flower> implements Fl
         }
 
         flowerDAO.delete(flower);
+    }
+
+    @Override
+    public List<Flower> findFlowersByPrice(Double priceFrom, Double priceTo, Integer limit, Integer offset) {
+        return flowerDAO.findByPrice(priceFrom, priceTo, limit, offset);
     }
 
     private boolean isFlowerExistByName(String name) {

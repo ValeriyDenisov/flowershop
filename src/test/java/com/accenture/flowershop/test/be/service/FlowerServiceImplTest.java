@@ -23,7 +23,7 @@ public class FlowerServiceImplTest extends AbstractTest {
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/flower/create_flower_table.sql",
-            "/sql/flower/insert_flower.sql"})
+            "/sql/flower/insert_flower_service.sql"})
     public void insertFlowerExistsTest() {
         flowerService.insertFlower(FLOWER_NAME_1, FLOWER_PRICE_1, FLOWER_QUANTITY_IN_STOCK_2);
     }
@@ -45,7 +45,7 @@ public class FlowerServiceImplTest extends AbstractTest {
     @Test(expected = EntityException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/flower/create_flower_table.sql",
-            "/sql/flower/insert_flower.sql"})
+            "/sql/flower/insert_flower_service.sql"})
     public void updateFlowerExistsTest() {
         flowerService.updateFlower(1, FLOWER_NAME_2, FLOWER_PRICE_2, FLOWER_QUANTITY_IN_STOCK_2);
     }

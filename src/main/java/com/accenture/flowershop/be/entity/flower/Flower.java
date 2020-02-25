@@ -18,7 +18,7 @@ public class Flower extends AbstractEntity {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "quantityInStock")
+    @Column(name = "quantity_in_stock")
     private Integer quantityInStock;
 
     public String getName() {

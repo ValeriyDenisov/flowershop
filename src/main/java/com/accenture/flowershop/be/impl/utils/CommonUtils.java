@@ -18,12 +18,6 @@ public abstract class CommonUtils {
         }
     }
 
-    public static void assertPrimitiveIntNull(int value, String msg) {
-        if (value == 0) {
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
     public static void assertEmpty(String value, String message) {
         if (StringUtils.isEmpty(value)) {
             throw new IllegalArgumentException(message);
@@ -34,9 +28,9 @@ public abstract class CommonUtils {
         for (String field: values.keySet()) {
             Object value = values.get(field);
             if (value instanceof String) {
-                assertEmpty((String) value, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, field));
+                assertEmpty((String) value, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, field));
             } else {
-                assertNull(value, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, field));
+                assertNull(value, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL, field));
             }
         }
     }

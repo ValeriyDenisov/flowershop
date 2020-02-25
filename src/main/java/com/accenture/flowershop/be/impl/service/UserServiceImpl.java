@@ -20,8 +20,8 @@ public class UserServiceImpl extends AbstractServiceImpl<User> implements UserSe
     UserDAO userDAO;
 
     public Integer insertUser(String login, String password) {
-        CommonUtils.assertEmpty(login, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.USER_LOGIN));
-        CommonUtils.assertEmpty(password, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.USER_PASSWORD));
+        CommonUtils.assertEmpty(login, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.USER_LOGIN));
+        CommonUtils.assertEmpty(password, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.USER_PASSWORD));
 
         if(isExistUserByLogin(login)) {
             throw new EntityException(MessageFormat.format(ERROR_USER_EXISTS_BY_LOGIN, login));
@@ -33,9 +33,9 @@ public class UserServiceImpl extends AbstractServiceImpl<User> implements UserSe
     }
 
     public void updateUser(Integer id, String login, String password) {
-        CommonUtils.assertEmpty(login, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.USER_LOGIN));
-        CommonUtils.assertNull(id, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.ENTITY_ID));
-        CommonUtils.assertNull(id, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.USER_PASSWORD));
+        CommonUtils.assertEmpty(login, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.USER_LOGIN));
+        CommonUtils.assertNull(id, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL, Constants.ENTITY_ID));
+        CommonUtils.assertNull(password, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL, Constants.USER_PASSWORD));
 
         User user = findById(id);
         if (user == null) {
@@ -73,7 +73,7 @@ public class UserServiceImpl extends AbstractServiceImpl<User> implements UserSe
     }
 
     public User findByLogin(String login) {
-        CommonUtils.assertEmpty(login, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL_OR_EMPTY, Constants.USER_LOGIN));
+        CommonUtils.assertEmpty(login, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.USER_LOGIN));
 
         return userDAO.findByUniqueElement(login, User.LOGIN);
     }

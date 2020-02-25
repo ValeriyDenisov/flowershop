@@ -1,17 +1,17 @@
 package com.accenture.flowershop.be.entity.user;
 
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
+import com.accenture.flowershop.be.entity.enums.Role;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @MappedSuperclass
 public abstract class AbstractUser extends AbstractEntity {
     public static final String LOGIN = "login";
 
-    @Transient
-    protected String role;
+    @Column(name = "role", nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
+    protected Role role;
 
     @Column(name = "login", unique = true, nullable = false)
     private String login;
@@ -28,7 +28,7 @@ public abstract class AbstractUser extends AbstractEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 

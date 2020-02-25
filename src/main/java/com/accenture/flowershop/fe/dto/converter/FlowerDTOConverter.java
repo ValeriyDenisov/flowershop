@@ -7,19 +7,18 @@ import com.accenture.flowershop.fe.dto.entity.FlowerDTO;
 
 import java.text.MessageFormat;
 
-public class FlowerDTOConverter extends AbstractDTOConverter<Flower> {
+public class FlowerDTOConverter extends AbstractDTOConverter<FlowerDTO, Flower> {
 
-    public static FlowerDTO convert(Flower flower) {
-        CommonUtils.assertNull(flower, MessageFormat.format(ERROR_ENTITY_NULL, Constants.ENTITY_FLOWER));
+    @Override
+    public FlowerDTO convert(Flower entity) {
+        CommonUtils.assertNull(entity, MessageFormat.format(ERROR_ENTITY_NULL, Constants.ENTITY_FLOWER));
 
         FlowerDTO flowerDTO = new FlowerDTO();
-        flowerDTO.setName(flower.getName());
-        flowerDTO.setPrice(flower.getPrice());
-        flowerDTO.setQuantityInStock(flower.getQuantityInStock());
-        flowerDTO.setId(flower.getId());
+        flowerDTO.setName(entity.getName());
+        flowerDTO.setPrice(entity.getPrice());
+        flowerDTO.setQuantityInStock(entity.getQuantityInStock());
+        flowerDTO.setId(entity.getId());
         return flowerDTO;
     }
 
-    private FlowerDTOConverter() {
-    }
 }
