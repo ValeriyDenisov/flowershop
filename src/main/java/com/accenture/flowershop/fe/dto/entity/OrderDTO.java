@@ -39,7 +39,7 @@ public class OrderDTO extends AbstractDTO {
         this.closeDate = closeDate;
     }
 
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
 

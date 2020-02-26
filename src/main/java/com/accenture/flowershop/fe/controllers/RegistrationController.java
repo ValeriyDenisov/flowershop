@@ -18,7 +18,7 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/registration")
-public class RegistrationController {
+public class RegistrationController extends AbstractController{
     public static final String ERROR_CONFIRM_PASSWORD = "Passwords does not same";
 
     @Autowired

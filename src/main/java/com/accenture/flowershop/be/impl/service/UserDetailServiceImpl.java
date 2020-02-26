@@ -26,9 +26,9 @@ public class UserDetailServiceImpl extends AbstractServiceImpl<User> implements 
         AbstractUser user = userService.findByLogin(login);
         Set<GrantedAuthority> roles = new HashSet<>();
         if (user.getRole().equals(Role.USER)) {
-            roles.add(new SimpleGrantedAuthority("ADMIN"));
-        } else {
             roles.add(new SimpleGrantedAuthority("USER"));
+        } else {
+            roles.add(new SimpleGrantedAuthority("ADMIN"));
         }
 
         return new org.springframework.security.core.userdetails.User(user.getLogin(),

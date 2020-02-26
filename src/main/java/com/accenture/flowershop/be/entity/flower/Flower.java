@@ -86,4 +86,5 @@ public class Flower extends AbstractEntity {
 
     public Flower() {
     }
+
 }

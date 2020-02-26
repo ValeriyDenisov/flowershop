@@ -31,6 +31,7 @@
         <h2-version>1.4.200</h2-version>
         <validation-api>2.0.1.Final</validation-api>
         <hiberante-validator-version>6.0.18.Final</hiberante-validator-version>
+        <commons-collections4>4.0</commons-collections4>
     </properties>
 
     <dependencies>
@@ -126,5 +127,12 @@
             <artifactId>validation-api</artifactId>
             <version>${validation-api}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
+        </dependency>
+
     </dependencies>
 </project>

@@ -24,6 +24,7 @@ create TABLE users
 (
     id int(10) PRIMARY KEY AUTO_INCREMENT,
     login VARCHAR(255) NOT NULL unique,
+    role VARCHAR (255) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
 
@@ -42,7 +43,6 @@ CREATE TABLE flowers
   id int(10) PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   price double NOT NULL,
-  role varchar(255) NOT NULL,
   quantity_in_stock int(10) NOT NULL
 );
 

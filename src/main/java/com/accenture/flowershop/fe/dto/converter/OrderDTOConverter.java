@@ -5,9 +5,11 @@ import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
 import com.accenture.flowershop.fe.dto.entity.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 
+@Component
 public class OrderDTOConverter extends AbstractDTOConverter<OrderDTO, Order> {
 
     @Autowired
@@ -19,8 +21,10 @@ public class OrderDTOConverter extends AbstractDTOConverter<OrderDTO, Order> {
 
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setActive(entity.getIsActive());
-        orderDTO.setCloseDate(entity.getCloseDate().toString());
-        orderDTO.setOpenDate(entity.getOpenDate().toString());
+        if (entity.getCloseDate() != null) {
+            orderDTO.setCloseDate(entity.getCloseDate().getTime().toString());
+        }
+        orderDTO.setOpenDate(entity.getOpenDate().getTime().toString());
         orderDTO.setPrice(entity.getPrice());
         orderDTO.setId(entity.getId());
         orderDTO.setCustomer(customerDTOConverter.convert(entity.getCustomer()));
