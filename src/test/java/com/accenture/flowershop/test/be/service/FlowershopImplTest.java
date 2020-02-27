@@ -4,7 +4,9 @@ package com.accenture.flowershop.test.be.service;
 import com.accenture.flowershop.be.api.exceptions.EntityCreationException;
 import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
 import com.accenture.flowershop.be.api.service.FlowershopService;
+import com.accenture.flowershop.be.api.service.OrderService;
 import com.accenture.flowershop.be.entity.flower.Flower;
+import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.fe.application.Cart;
 import com.accenture.flowershop.test.be.AbstractTest;
 import org.apache.commons.collections4.MapUtils;
@@ -83,6 +85,4 @@ public class FlowershopImplTest extends AbstractTest {
         Assert.assertEquals((Double) 270.0, cart.getTotalPrice());
 
     }
-
-
 }

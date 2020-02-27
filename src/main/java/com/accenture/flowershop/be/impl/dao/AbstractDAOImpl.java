@@ -11,7 +11,7 @@ import javax.persistence.TypedQuery;
 import java.text.MessageFormat;
 import java.util.List;
 
-@Transactional
+
 public abstract class AbstractDAOImpl<T extends AbstractEntity> implements AbstractDAO<T> {
     public static final String SELECT_ALL_QUERY = "From {0} a";
     public static final String SELECT_BY_UNIQUE_ELEMENT_QUERY = "SELECT E FROM {0} E WHERE {1} = :{1}";
@@ -30,7 +30,7 @@ public abstract class AbstractDAOImpl<T extends AbstractEntity> implements Abstr
     }
 
     public void delete(T object) {
-        entityManager.detach(object);
+        entityManager.remove(object);
     }
 
     public void update(T object) {

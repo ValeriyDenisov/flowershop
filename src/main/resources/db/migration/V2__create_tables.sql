@@ -1,4 +1,4 @@
-CREATE TABLE addresses
+CREATE TABLE IF NOT EXISTS addresses
 (
   id int(10) PRIMARY KEY AUTO_INCREMENT,
   street VARCHAR(255) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE addresses
   building int(10) NOT NULL
 );
 
-CREATE TABLE customers
+CREATE TABLE IF NOT EXISTS customers
 (
   id int(10) PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE customers
   email varchar (255) NOT NULL unique
 );
 
-create TABLE users
+create TABLE IF NOT EXISTS users
 (
     id int(10) PRIMARY KEY AUTO_INCREMENT,
     login VARCHAR(255) NOT NULL unique,
@@ -28,7 +28,7 @@ create TABLE users
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE orders
+CREATE TABLE IF NOT EXISTS orders
 (
   id int(10) PRIMARY KEY AUTO_INCREMENT,
   price double NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE orders
   customer_id int(10) NOT NULL
 );
 
-CREATE TABLE flowers
+CREATE TABLE IF NOT EXISTS flowers
 (
   id int(10) PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,

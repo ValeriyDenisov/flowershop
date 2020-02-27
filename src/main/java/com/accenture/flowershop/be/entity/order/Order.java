@@ -2,11 +2,10 @@ package com.accenture.flowershop.be.entity.order;
 
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
 import com.accenture.flowershop.be.entity.customer.Customer;
-import com.accenture.flowershop.be.entity.flower.Flower;
+import com.accenture.flowershop.fe.application.Cart;
 
 import javax.persistence.*;
 import java.util.Calendar;
-import java.util.Map;
 
 @Entity
 @Table(name = "orders")
@@ -29,14 +28,18 @@ public class Order extends AbstractEntity {
     private Boolean isActive;
 
     @Transient
-    private Map<Flower, Integer> flowers;
+    private Cart cart;
 
-    public Map<Flower, Integer> getFlowers() {
-        return flowers;
+    public Boolean getActive() {
+        return isActive;
     }
 
-    public void setFlowers(Map<Flower, Integer> flowers) {
-        this.flowers = flowers;
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     public Double getPrice() {

@@ -4,6 +4,7 @@ import com.accenture.flowershop.be.api.dao.FlowerDAO;
 import com.accenture.flowershop.be.entity.flower.Flower;
 import com.accenture.flowershop.be.impl.utils.Constants;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -24,6 +25,7 @@ public class FlowerDAOImpl extends AbstractDAOImpl<Flower> implements FlowerDAO 
     }
 
     @Override
+    @Transactional
     public List<Flower> findByPrice(Double priceFrom, Double priceTo, Integer limit, Integer offset) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Flower> criteriaQuery = criteriaBuilder.createQuery(getType());

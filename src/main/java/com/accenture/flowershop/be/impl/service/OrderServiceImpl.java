@@ -11,6 +11,7 @@ import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
+import com.accenture.flowershop.fe.application.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.Map;
 @Transactional
 public class OrderServiceImpl extends AbstractServiceImpl<Order> implements OrderService {
     public static final String ERROR_ORDER_CUSTOMER_NOT_FOUND = "Customer with email: {0} not found";
+    public static final String ERROR_ORDER_CUSTOMER_NOT_ENOUGH_BALANCE = "Customer with email: {0} not enough balance";
 
     @Autowired
     OrderDAO orderDAO;
@@ -38,6 +40,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         return orderDAO.findById(id);
     }
 
+    @Transactional
     public Integer insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
         CommonUtils.assertValues(getOrderFieldsValues(null, customerId, price, openDate, closeDate, isActive));
 
@@ -51,6 +54,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         return order.getId();
     }
 
+    @Transactional
     public void updateOrder(Integer orderId, Integer customerId, Double price,
                             Boolean isActive, Calendar openDate, Calendar closeDate) {
         CommonUtils.assertValues(getOrderFieldsValues(orderId, customerId, price, openDate, closeDate, isActive));
@@ -81,6 +85,13 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
             throw new EntityUpdateException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Constants.ENTITY_ORDER, orderId));
         }
 
+        Customer customer = order.getCustomer();
+        if (order.getCustomer().getBalance() <= order.getPrice()) {
+            throw new EntityUpdateException(MessageFormat.format(ERROR_ORDER_CUSTOMER_NOT_ENOUGH_BALANCE, order.getCustomer().getEmail()));
+        }
+
+        customerService.updateCustomer(customer.getId(), customer.getName(), customer.getSecondName(), customer.getFatherName(),
+                customer.getAddress().getId(), customer.getPhone(), customer.getBalance() - order.getPrice(), customer.getDiscount(), customer.getEmail());
         order.setCloseDate(Calendar.getInstance());
         order.setActive(false);
         orderDAO.update(order);
@@ -98,7 +109,8 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
     }
 
     @Override
-    public void createOrder(Double price, String customerEmail) throws EntityCreationException {
+    @Transactional
+    public void createOrder(Double price, String customerEmail, Cart cart) throws EntityCreationException {
         CommonUtils.assertNull(price, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.ORDER_PRICE));
         CommonUtils.assertEmpty(customerEmail, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_EMAIL));
 
@@ -108,6 +120,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         }
 
         Order order = new Order.Builder(customer, price, true, Calendar.getInstance()).build();
+        order.setCart(cart);
         orderDAO.insert(order);
     }
 

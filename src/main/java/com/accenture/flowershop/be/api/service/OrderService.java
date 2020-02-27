@@ -3,6 +3,7 @@ package com.accenture.flowershop.be.api.service;
 import com.accenture.flowershop.be.api.exceptions.EntityCreationException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdateException;
 import com.accenture.flowershop.be.entity.order.Order;
+import com.accenture.flowershop.fe.application.Cart;
 
 import java.util.Calendar;
 import java.util.List;
@@ -17,7 +18,7 @@ public interface OrderService {
 
     void deleteOrder(Integer id);
 
-    void createOrder(Double price, String customerEmail) throws EntityCreationException;
+    void createOrder(Double price, String customerEmail, Cart cart) throws EntityCreationException;
 
     void closeOrder(Integer orderId) throws EntityUpdateException;
 

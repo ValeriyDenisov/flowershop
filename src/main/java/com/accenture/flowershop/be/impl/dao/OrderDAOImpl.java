@@ -19,6 +19,7 @@ import java.util.List;
 public class OrderDAOImpl extends AbstractDAOImpl<Order> implements OrderDAO {
 
     @Override
+    @Transactional
     public List<Order> findByCustomerEmail(String email) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(getType());

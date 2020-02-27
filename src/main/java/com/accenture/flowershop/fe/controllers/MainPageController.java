@@ -1,15 +1,17 @@
 package com.accenture.flowershop.fe.controllers;
 
+import com.accenture.flowershop.be.api.exceptions.EntityException;
+import com.accenture.flowershop.be.api.exceptions.EntityUpdateException;
 import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.api.service.FlowerService;
 import com.accenture.flowershop.be.api.service.FlowershopService;
 import com.accenture.flowershop.be.api.service.OrderService;
 import com.accenture.flowershop.be.entity.customer.Customer;
-import com.accenture.flowershop.be.entity.flower.Flower;
-import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.fe.application.Cart;
+import com.accenture.flowershop.fe.dto.converter.CustomerDTOConverter;
 import com.accenture.flowershop.fe.dto.converter.FlowerDTOConverter;
 import com.accenture.flowershop.fe.dto.converter.OrderDTOConverter;
+import com.accenture.flowershop.fe.dto.entity.CustomerDTO;
 import com.accenture.flowershop.fe.dto.entity.FlowerDTO;
 import com.accenture.flowershop.fe.dto.entity.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ public class MainPageController extends AbstractController {
     FlowerDTOConverter flowerDTOConverter;
 
     @Autowired
+    CustomerDTOConverter customerDTOConverter;
+
+    @Autowired
     OrderDTOConverter orderDTOConverter;
 
     @Autowired
@@ -51,15 +56,28 @@ public class MainPageController extends AbstractController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String mainPage(@RequestParam(required = false) Double priceFrom, @RequestParam(required = false) Double priceTo,
                            HttpSession session, Principal principal, Model model) {
+        List<OrderDTO> orders;
         if (isUser(principal)) {
-            String username = principal.getName();
+            CustomerDTO customer = customerDTOConverter.convert(customerService.findCustomerByEmail(principal.getName()));
+            if (customer == null) {
+                return "errorPage";
+            }
             List<FlowerDTO> flowers = flowerDTOConverter.convertAll(flowerService.findFlowersByPrice(priceFrom, priceTo,
                     null, null));
-            List<OrderDTO> orders = orderDTOConverter.convertAll(orderService.findOrdersByCustomerEmail(username));
+            orders = orderDTOConverter.convertAll(orderService.findOrdersByCustomerEmail(customer.getEmail()));
             model.addAttribute("flowers", flowers);
             model.addAttribute("orders", orders);
+            model.addAttribute("customer", customer);
+            return "mainPage";
         }
-        return "mainPage";
+
+        if (isAdmin(principal)) {
+            orders = orderDTOConverter.convertAll(orderService.findAllOrders());
+            model.addAttribute("orders", orders);
+            return "mainPage";
+        }
+
+        return "errorPage";
     }
 
     @RequestMapping(value = "/addFlower", method = RequestMethod.POST)
@@ -84,9 +102,13 @@ public class MainPageController extends AbstractController {
     }
 
     @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-    public String createOrder(@RequestParam Double price, SessionStatus sessionStatus, Principal principal) {
-        if(isUser(principal)) {
-            orderService.createOrder(price, principal.getName());
+    public String createOrder(@RequestParam Double price, HttpSession session, SessionStatus sessionStatus, Principal principal) {
+        if (isUser(principal)) {
+            Cart cart = (Cart) session.getAttribute("cart");
+            if (cart == null) {
+                return "errorPage";
+            }
+            orderService.createOrder(price, principal.getName(), cart);
             sessionStatus.setComplete();
             return REDIRECT + "/";
         } else {
@@ -97,11 +119,25 @@ public class MainPageController extends AbstractController {
     @RequestMapping(value = "/closeOrder", method = RequestMethod.POST)
     public String closeOrder(@RequestParam Integer id, Principal principal, Model model) {
         if (isUser(principal)) {
-            orderService.closeOrder(id);
-            return REDIRECT + "/";
-        } else {
-            return "errorPage";
+            try {
+                orderService.closeOrder(id);
+                return REDIRECT + "/";
+            } catch (EntityUpdateException e) {
+                return REDIRECT + "/error?msg=" + e.getMessage();
+            }
         }
+
+        if (isAdmin(principal)) {
+            try {
+                orderService.deleteOrder(id);
+                return REDIRECT + "/";
+            } catch (EntityException e) {
+                return REDIRECT + "/error?msg" + e.getMessage();
+            }
+        }
+
+        return "errorPage";
+
     }
 }
 

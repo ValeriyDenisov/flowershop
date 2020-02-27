@@ -8,18 +8,6 @@
     <artifactId>flowershop</artifactId>
     <packaging>war</packaging>
     <version>0.01</version>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <properties>
         <spring-version>5.2.0.RELEASE</spring-version>
@@ -32,7 +20,60 @@
         <validation-api>2.0.1.Final</validation-api>
         <hiberante-validator-version>6.0.18.Final</hiberante-validator-version>
         <commons-collections4>4.0</commons-collections4>
+        <flyway-core-version>6.1.3</flyway-core-version>
+        <properties-maven-plugin-verison>1.0.0</properties-maven-plugin-verison>
+        <jdbc.driverClassName>com.mysql.cj.jdbc.Driver</jdbc.driverClassName>
+        <jdbc.url>jdbc:mysql://localhost:3306/flowershop?serverTimezone=Europe/Minsk</jdbc.url>
+        <jdbc.username>root</jdbc.username>
+        <jdbc.password>root</jdbc.password>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>${properties-maven-plugin-verison}</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>src/main/resources/properties/db.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway-core-version}</version>
+                <configuration>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                    <user>${jdbc.username}</user>
+                    <password>${jdbc.password}</password>
+                    <driver>${jdbc.driverClassName}r</driver>
+                    <url>${jdbc.url}</url>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -134,5 +175,16 @@
             <version>4.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway-core-version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -12,6 +12,5 @@
     <input type="submit" value="Enter">
     <input type="button" value="Registration" onclick="location.href='/registration'">
 </form>
-
 </body>
 </html>
