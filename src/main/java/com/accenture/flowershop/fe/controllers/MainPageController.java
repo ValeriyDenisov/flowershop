@@ -55,19 +55,22 @@ public class MainPageController extends AbstractController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String mainPage(@RequestParam(required = false) Double priceFrom, @RequestParam(required = false) Double priceTo,
-                           HttpSession session, Principal principal, Model model) {
+                           @RequestParam(required = false) String name, HttpSession session, Principal principal, Model model) {
         List<OrderDTO> orders;
         if (isUser(principal)) {
             CustomerDTO customer = customerDTOConverter.convert(customerService.findCustomerByEmail(principal.getName()));
             if (customer == null) {
                 return "errorPage";
             }
-            List<FlowerDTO> flowers = flowerDTOConverter.convertAll(flowerService.findFlowersByPrice(priceFrom, priceTo,
+            List<FlowerDTO> flowers = flowerDTOConverter.convertAll(flowerService.findFlowersByParameters(name, priceFrom, priceTo,
                     null, null));
             orders = orderDTOConverter.convertAll(orderService.findOrdersByCustomerEmail(customer.getEmail()));
             model.addAttribute("flowers", flowers);
             model.addAttribute("orders", orders);
             model.addAttribute("customer", customer);
+            model.addAttribute("name", name);
+            model.addAttribute("priceFrom", priceFrom);
+            model.addAttribute("priceTo", priceTo);
             return "mainPage";
         }
 

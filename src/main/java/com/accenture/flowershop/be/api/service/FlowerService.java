@@ -17,5 +17,5 @@ public interface FlowerService {
 
     void deleteFlower(Integer flowerId);
 
-    List<Flower> findFlowersByPrice(Double priceFrom, Double priceTo, Integer limit, Integer offset);
+    List<Flower> findFlowersByParameters(String name, Double priceFrom, Double priceTo, Integer limit, Integer offset);
 }

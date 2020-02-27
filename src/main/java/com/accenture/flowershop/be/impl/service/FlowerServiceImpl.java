@@ -80,8 +80,8 @@ public class FlowerServiceImpl extends AbstractServiceImpl<Flower> implements Fl
     }
 
     @Override
-    public List<Flower> findFlowersByPrice(Double priceFrom, Double priceTo, Integer limit, Integer offset) {
-        return flowerDAO.findByPrice(priceFrom, priceTo, limit, offset);
+    public List<Flower> findFlowersByParameters(String name, Double priceFrom, Double priceTo, Integer limit, Integer offset) {
+        return flowerDAO.findByParameters(name, priceFrom, priceTo, limit, offset);
     }
 
     private boolean isFlowerExistByName(String name) {

@@ -26,31 +26,31 @@ public class FlowerDAOTest extends AbstractTest {
     public void flowerFindByPriceTest() {
         List<Flower> flowers;
 
-        flowers = flowerDAO.findByPrice(null, null, null, null);
+        flowers = flowerDAO.findByParameters(null, null, null, null, null);
         Assert.assertFalse(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND, 4), CollectionUtils.isEmpty(flowers));
         Assert.assertEquals(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 4), 4, flowers.size());
 
-        flowers = flowerDAO.findByPrice(111.11, 444.44, null, null);
+        flowers = flowerDAO.findByParameters(null, 111.11, 444.44, null, null);
         Assert.assertFalse(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND, 4), CollectionUtils.isEmpty(flowers));
         Assert.assertEquals(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 4), 4, flowers.size());
 
-        flowers = flowerDAO.findByPrice(333.34, null, null, null);
+        flowers = flowerDAO.findByParameters(null, 333.34, null, null, null);
         Assert.assertFalse(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND, 1), CollectionUtils.isEmpty(flowers));
         Assert.assertEquals(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 1), 1, flowers.size());
 
-        flowers = flowerDAO.findByPrice(111.11, 444.44, 2, null);
+        flowers = flowerDAO.findByParameters(null, 111.11, 444.44, 2, null);
         Assert.assertFalse(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND, 2), CollectionUtils.isEmpty(flowers));
         Assert.assertEquals(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 2), 2, flowers.size());
 
-        flowers = flowerDAO.findByPrice(111.11, 444.44, null, 1);
+        flowers = flowerDAO.findByParameters(null, 111.11, 444.44, null, 1);
         Assert.assertFalse(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND, 3), CollectionUtils.isEmpty(flowers));
         Assert.assertEquals(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 3), 3, flowers.size());
 
-        flowers = flowerDAO.findByPrice(333.33, 444.44, null, 1);
+        flowers = flowerDAO.findByParameters(null, 333.33, 444.44, null, 1);
         Assert.assertFalse(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND, 1), CollectionUtils.isEmpty(flowers));
         Assert.assertEquals(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 3), 1, flowers.size());
 
-        flowers = flowerDAO.findByPrice(111.11, 222.22, null, 3);
+        flowers = flowerDAO.findByParameters(null, 111.11, 222.22, null, 3);
         Assert.assertTrue(MessageFormat.format(ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT, flowers.size(), 0), CollectionUtils.isEmpty(flowers));
     }
 }

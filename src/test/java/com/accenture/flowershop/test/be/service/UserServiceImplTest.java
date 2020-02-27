@@ -41,14 +41,4 @@ public class UserServiceImplTest extends AbstractTest {
     public void updateUserNotFound() {
         userService.updateUser(404, USER_NAME_1, USER_PASSWORD_1);
     }
-
-    @Test(expected = EntityException.class)
-    @Sql({"/sql/delete_data_tables.sql",
-            "/sql/user/create_user_table.sql",
-            "/sql/user/insert_user.sql"})
-    public void updateUserExistsByLogin() {
-        System.out.println(CommonUtils.getPasswordEncoder().encode("123"));
-        System.out.println(CommonUtils.getPasswordEncoder().encode("123"));
-        userService.updateUser(1, USER_NAME_2, USER_PASSWORD_1);
-    }
 }
