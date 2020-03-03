@@ -1,6 +1,6 @@
 package com.accenture.flowershop.be.impl.service;
 
-import com.accenture.flowershop.be.api.exceptions.EntityCreationException;
+import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
 import com.accenture.flowershop.be.api.exceptions.EntityException;
 import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
 import com.accenture.flowershop.be.api.service.*;
@@ -11,6 +11,7 @@ import com.accenture.flowershop.fe.application.Cart;
 import com.accenture.flowershop.fe.application.FlowerInformation;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -40,8 +41,11 @@ public class FlowershopServiceImpl implements FlowershopService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public void customerRegistration(String name, String secondName, String fatherName, String city, String street,
-                                     Integer code, Integer building, String phone, String email, String password) throws EntityCreationException {
+                                     Integer code, Integer building, String phone, String email, String password) throws EntityException {
         CommonUtils.assertValues(CommonUtils.getFieldsValues(() -> {
             HashMap<String, Object> fieldsValues = new HashMap<>();
             fieldsValues.put(Constants.CUSTOMER_NAME, name);
@@ -61,29 +65,30 @@ public class FlowershopServiceImpl implements FlowershopService {
 
         Integer addressId = addressService.insertAddress(street, city, code, building);
         if (addressId == null) {
-            throw new EntityCreationException(MessageFormat.format(ERROR_ENTITY_CREATION, Constants.ENTITY_ADDRESS));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_CREATION, Constants.ENTITY_ADDRESS));
+            throw new EntityCreatingException(ex);
         }
 
         Integer userId;
         try {
-            userId = userService.insertUser(email, CommonUtils.getPasswordEncoder().encode(password));
-        } catch (EntityException e) {
+            userId = userService.insertUser(email, passwordEncoder.encode(password));
+        } catch (EntityCreatingException e) {
             addressService.deleteAddress(addressId);
-            throw new EntityCreationException(e.getMessage());
+            throw new EntityCreatingException(e.getMessage());
         }
 
         try {
             customerService.insertCustomer(name, secondName, fatherName, addressId, phone,
                     STARTING_BALANCE, STARTING_DISCOUNT, email);
-        } catch (EntityException e) {
+        } catch (EntityCreatingException e) {
             userService.deleteUser(userId);
             addressService.deleteAddress(addressId);
-            throw new EntityCreationException(e.getMessage());
+            throw new EntityCreatingException(e.getMessage());
         }
     }
 
     @Override
-    public Cart addFlowersToCart(Cart cart, String flowerName, Integer count, Short discount) {
+    public Cart addFlowersToCart(Cart cart, String flowerName, Integer count, Short discount) throws EntityException {
         CommonUtils.assertEmpty(flowerName, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, "flowerName"));
         CommonUtils.assertNull(count, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL, "count"));
         CommonUtils.assertNull(discount, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL, Constants.CUSTOMER_DISCOUNT));
@@ -101,7 +106,9 @@ public class FlowershopServiceImpl implements FlowershopService {
             throw new EntityFindingException(MessageFormat.format(ERROR_FLOWER_NOT_FOUND, flowerName));
         }
         if (flower.getQuantityInStock() < count) {
-            throw new IllegalArgumentException(MessageFormat.format(ERROR_FLOWER_NOT_ENOUGH_IN_STOCK, flowerName));
+            IllegalArgumentException ex = new IllegalArgumentException(MessageFormat.format(ERROR_FLOWER_NOT_ENOUGH_IN_STOCK, flowerName));
+            throw new EntityCreatingException(ex);
+
         }
 
         Double priceForFlower = flower.getPrice() * count;
@@ -137,7 +144,7 @@ public class FlowershopServiceImpl implements FlowershopService {
         for (FlowerInformation flowerInfo : flowers.values()) {
             price += flowerInfo.getPrice();
         }
-        if (discount != null && discount != 0 ) {
+        if (discount != null && discount != 0) {
             price = ((100 - discount) * price) / 100;
         }
         return price;

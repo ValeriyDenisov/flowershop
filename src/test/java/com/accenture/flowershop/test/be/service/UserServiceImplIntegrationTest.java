@@ -1,16 +1,15 @@
 package com.accenture.flowershop.test.be.service;
 
-import com.accenture.flowershop.be.api.exceptions.EntityException;
+import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
+import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
+import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.UserService;
-import com.accenture.flowershop.be.entity.enums.Role;
-import com.accenture.flowershop.be.entity.user.User;
-import com.accenture.flowershop.be.impl.utils.CommonUtils;
-import com.accenture.flowershop.test.be.AbstractTest;
+import com.accenture.flowershop.test.be.AbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-public class UserServiceImplTest extends AbstractTest {
+public class UserServiceImplIntegrationTest extends AbstractIntegrationTest {
     public static final String USER_TABLE_NAME = "users";
     public static final String USER_NAME_1 = "name_1";
     public static final String USER_PASSWORD_1 = "password_1";
@@ -20,7 +19,7 @@ public class UserServiceImplTest extends AbstractTest {
     @Autowired
     UserService userService;
 
-    @Test(expected = EntityException.class)
+    @Test(expected = EntityCreatingException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/user/create_user_table.sql",
             "/sql/user/insert_user.sql"})
@@ -28,14 +27,14 @@ public class UserServiceImplTest extends AbstractTest {
         userService.insertUser(USER_NAME_1, USER_PASSWORD_1);
     }
 
-    @Test(expected = EntityException.class)
+    @Test(expected = EntityDeletingException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/user/create_user_table.sql"})
     public void deleteUserNotFound() {
         userService.deleteUser(404);
     }
 
-    @Test(expected = EntityException.class)
+    @Test(expected = EntityUpdatingException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/user/create_user_table.sql"})
     public void updateUserNotFound() {

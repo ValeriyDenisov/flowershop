@@ -17,7 +17,7 @@ import static com.accenture.flowershop.be.impl.dao.AbstractDAOImpl.SELECT_BY_UNI
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:/config/test-application-context.xml")
 @Transactional
-public abstract class AbstractTest {
+public abstract class AbstractIntegrationTest {
     @PersistenceContext
     protected EntityManager entityManager;
 

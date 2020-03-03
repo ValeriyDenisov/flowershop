@@ -1,6 +1,5 @@
 package com.accenture.flowershop.fe.config;
 
-import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -19,10 +19,13 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
     UserDetailsService userDetailsService;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(userDetailsService)
-                .passwordEncoder(CommonUtils.getPasswordEncoder());
+                .passwordEncoder(passwordEncoder);
     }
 
     @Override

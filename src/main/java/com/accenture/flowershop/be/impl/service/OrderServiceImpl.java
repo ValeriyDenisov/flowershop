@@ -1,10 +1,10 @@
 package com.accenture.flowershop.be.impl.service;
 
-import com.accenture.flowershop.be.api.dao.CustomerDAO;
 import com.accenture.flowershop.be.api.dao.OrderDAO;
-import com.accenture.flowershop.be.api.exceptions.EntityCreationException;
-import com.accenture.flowershop.be.api.exceptions.EntityException;
-import com.accenture.flowershop.be.api.exceptions.EntityUpdateException;
+import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
+import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
+import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
+import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.api.service.OrderService;
 import com.accenture.flowershop.be.entity.customer.Customer;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class OrderServiceImpl extends AbstractServiceImpl<Order> implements OrderService {
+public class OrderServiceImpl extends AbstractServiceImpl implements OrderService {
     public static final String ERROR_ORDER_CUSTOMER_NOT_FOUND = "Customer with email: {0} not found";
     public static final String ERROR_ORDER_CUSTOMER_NOT_ENOUGH_BALANCE = "Customer with email: {0} not enough balance";
 
@@ -41,31 +41,39 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
     }
 
     @Transactional
-    public Integer insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
+    public Integer insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate)
+            throws EntityCreatingException {
         CommonUtils.assertValues(getOrderFieldsValues(null, customerId, price, openDate, closeDate, isActive));
 
         Customer customer = customerService.findCustomerById(customerId);
         if (customer == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            throw new EntityCreatingException(ex);
         }
 
-        Order order = createOrder(customer, price, isActive, openDate, closeDate);
+        Order order = initOrder(customer, price, isActive, openDate, closeDate);
+        validateEntity(order, (ex) -> {
+            throw new EntityCreatingException(ex);
+        });
+
         orderDAO.insert(order);
         return order.getId();
     }
 
     @Transactional
     public void updateOrder(Integer orderId, Integer customerId, Double price,
-                            Boolean isActive, Calendar openDate, Calendar closeDate) {
+                            Boolean isActive, Calendar openDate, Calendar closeDate) throws EntityUpdatingException {
         CommonUtils.assertValues(getOrderFieldsValues(orderId, customerId, price, openDate, closeDate, isActive));
 
         Order order = findOrderById(orderId);
         if (order == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Order.class, orderId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Order.class, orderId));
+            throw new EntityUpdatingException(ex);
         }
         Customer customer = customerService.findCustomerById(customerId);
         if (customer == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            throw new EntityUpdatingException(ex);
         }
 
         order.setActive(isActive);
@@ -73,21 +81,26 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         order.setCustomer(customer);
         order.setOpenDate(openDate);
         order.setPrice(price);
+        validateEntity(order, (ex) -> {
+            throw new EntityUpdatingException(ex);
+        });
+
         orderDAO.update(order);
     }
 
     @Override
-    public void closeOrder(Integer orderId) throws EntityUpdateException {
+    public void closeOrder(Integer orderId) throws EntityUpdatingException {
         CommonUtils.assertNull(orderId, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_NULL, "orderId"));
 
         Order order = findOrderById(orderId);
         if (order == null) {
-            throw new EntityUpdateException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Constants.ENTITY_ORDER, orderId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Constants.ENTITY_ORDER, orderId));
+            throw new EntityUpdatingException(ex);
         }
 
         Customer customer = order.getCustomer();
         if (order.getCustomer().getBalance() <= order.getPrice()) {
-            throw new EntityUpdateException(MessageFormat.format(ERROR_ORDER_CUSTOMER_NOT_ENOUGH_BALANCE, order.getCustomer().getEmail()));
+            throw new EntityUpdatingException(MessageFormat.format(ERROR_ORDER_CUSTOMER_NOT_ENOUGH_BALANCE, order.getCustomer().getEmail()));
         }
 
         customerService.updateCustomer(customer.getId(), customer.getName(), customer.getSecondName(), customer.getFatherName(),
@@ -97,12 +110,13 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         orderDAO.update(order);
     }
 
-    public void deleteOrder(Integer id) {
+    public void deleteOrder(Integer id) throws EntityDeletingException {
         CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
 
         Order order = findOrderById(id);
         if (order == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Order.class, id));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Order.class, id));
+            throw new EntityDeletingException(ex);
         }
 
         orderDAO.delete(order);
@@ -110,17 +124,22 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
 
     @Override
     @Transactional
-    public void createOrder(Double price, String customerEmail, Cart cart) throws EntityCreationException {
+    public void createOrder(Double price, String customerEmail, Cart cart) throws EntityCreatingException {
         CommonUtils.assertNull(price, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.ORDER_PRICE));
         CommonUtils.assertEmpty(customerEmail, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_EMAIL));
 
         Customer customer = customerService.findCustomerByEmail(customerEmail);
         if (customer == null) {
-            throw new EntityCreationException(MessageFormat.format(ERROR_ORDER_CUSTOMER_NOT_FOUND, customerEmail));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ORDER_CUSTOMER_NOT_FOUND, customerEmail));
+            throw new EntityCreatingException(ex);
         }
 
         Order order = new Order.Builder(customer, price, true, Calendar.getInstance()).build();
         order.setCart(cart);
+        validateEntity(order, (ex -> {
+            throw new EntityCreatingException(ex);
+        }));
+
         orderDAO.insert(order);
     }
 
@@ -133,7 +152,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order> implements Orde
         return orderDAO.findAll();
     }
 
-    private Order createOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
+    private Order initOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
         return new Order.Builder(customer, price, isActive, openDate).closeDate(closeDate).build();
     }
 

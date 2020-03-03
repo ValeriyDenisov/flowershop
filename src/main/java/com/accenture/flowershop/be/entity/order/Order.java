@@ -5,6 +5,10 @@ import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.fe.application.Cart;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
 import java.util.Calendar;
 
 @Entity
@@ -13,18 +17,28 @@ public class Order extends AbstractEntity {
 
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "customer_id", nullable = false)
+    @NotNull(message = "Order customer is null!")
+    @Valid
     private Customer customer;
 
-    @Column(name = "price")
+
+    @Column(name = "price", nullable = false)
+    @NotNull(message = "Order price is null!")
+    @Positive(message = "Order price is negative!")
     private Double price;
 
-    @Column(name = "open_date")
+    @Column(name = "open_date", nullable = false)
+    @NotNull(message = "Order open date is null!")
+    @PastOrPresent(message = "Order open date is incorrect!")
     private Calendar openDate;
 
+
     @Column(name = "close_date")
+    @PastOrPresent(message = "Order close date is incorrect!")
     private Calendar closeDate;
 
     @Column(name = "is_active")
+    @NotNull(message = "Order active is null!")
     private Boolean isActive;
 
     @Transient
@@ -84,14 +98,17 @@ public class Order extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Order{" +
-                "id=" + (id != null ? id : "") +
-                ", customer=" + customer.toString() +
-                ", price=" + price +
-                ", isActive=" + isActive +
-                ", openDate=" + openDate +
-                ", closeDate=" + (closeDate != null ? closeDate.toString() : "") +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("Order{")
+                .append("id=").append(id != null ? id : "")
+                .append(", customer= ").append(customer.toString())
+                .append(", price= ").append(price)
+                .append(", isActive= ").append(isActive)
+                .append(", openDate= ").append(openDate.getTime().toString())
+                .append(", closeDate= ").append(closeDate != null ? closeDate.getTime().toString() : "")
+                .append("}");
+        return builder.toString();
     }
 
     public static class Builder {
@@ -114,6 +131,7 @@ public class Order extends AbstractEntity {
             this.id = id;
             return this;
         }
+
         public Builder closeDate(Calendar closeDate) {
             this.closeDate = closeDate;
             return this;
@@ -133,5 +151,6 @@ public class Order extends AbstractEntity {
         this.closeDate = builder.closeDate;
     }
 
-    public Order() {}
+    public Order() {
+    }
 }

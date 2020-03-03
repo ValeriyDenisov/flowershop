@@ -22,6 +22,8 @@
         <commons-collections4>4.0</commons-collections4>
         <flyway-core-version>6.1.3</flyway-core-version>
         <properties-maven-plugin-verison>1.0.0</properties-maven-plugin-verison>
+        <tomcat-version>8.5.14</tomcat-version>
+        <javax.el-api-version>3.0.0</javax.el-api-version>
         <jdbc.driverClassName>com.mysql.cj.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url>jdbc:mysql://localhost:3306/flowershop?serverTimezone=Europe/Minsk</jdbc.url>
         <jdbc.username>root</jdbc.username>
@@ -114,6 +116,19 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-el-api</artifactId>
+            <version>${tomcat-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jasper-el</artifactId>
+            <version>${tomcat-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql-connector-java-version}</version>
@@ -186,5 +201,12 @@
             <artifactId>flyway-core</artifactId>
             <version>${flyway-core-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>${javax.el-api-version}</version>
+        </dependency>
+
     </dependencies>
 </project>

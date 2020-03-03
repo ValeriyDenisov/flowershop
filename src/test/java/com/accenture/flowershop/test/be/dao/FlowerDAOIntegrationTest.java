@@ -2,7 +2,7 @@ package com.accenture.flowershop.test.be.dao;
 
 import com.accenture.flowershop.be.api.dao.FlowerDAO;
 import com.accenture.flowershop.be.entity.flower.Flower;
-import com.accenture.flowershop.test.be.AbstractTest;
+import com.accenture.flowershop.test.be.AbstractIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.MessageFormat;
 import java.util.List;
 
-public class FlowerDAOTest extends AbstractTest {
+public class FlowerDAOIntegrationTest extends AbstractIntegrationTest {
     public static final String ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND = "Flower not found, expected found flowers: {0}";
     public static final String ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT = "Flower found: {0}, expected found flowers: {1}";
 

@@ -1,7 +1,8 @@
 package com.accenture.flowershop.fe.controllers;
 
+import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
 import com.accenture.flowershop.be.api.exceptions.EntityException;
-import com.accenture.flowershop.be.api.exceptions.EntityUpdateException;
+import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.api.service.FlowerService;
 import com.accenture.flowershop.be.api.service.FlowershopService;
@@ -89,19 +90,23 @@ public class MainPageController extends AbstractController {
         if (count == null || StringUtils.isEmpty(flowerName)) {
             return REDIRECT + "/";
         }
+
         if (isUser(principal)) {
             Cart cart = (Cart) session.getAttribute("cart");
             Customer customer = customerService.findCustomerByEmail(principal.getName());
             if (customer == null) {
                 return "errorPage";
             }
-
-            cart = flowershopService.addFlowersToCart(cart, flowerName, count, customer.getDiscount());
-            session.setAttribute("cart", cart);
-            return REDIRECT + "/";
-        } else {
-            return "errorPage";
+            try {
+                cart = flowershopService.addFlowersToCart(cart, flowerName, count, customer.getDiscount());
+                session.setAttribute("cart", cart);
+                return REDIRECT + "/";
+            } catch (EntityException e) {
+                return "errorPage";
+            }
         }
+
+        return "errorPage";
     }
 
     @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
@@ -111,12 +116,16 @@ public class MainPageController extends AbstractController {
             if (cart == null) {
                 return "errorPage";
             }
-            orderService.createOrder(price, principal.getName(), cart);
-            sessionStatus.setComplete();
-            return REDIRECT + "/";
-        } else {
-            return "errorPage";
+
+            try {
+                orderService.createOrder(price, principal.getName(), cart);
+                sessionStatus.setComplete();
+                return REDIRECT + "/";
+            } catch (EntityCreatingException e) {
+                return "errorPage";
+            }
         }
+        return "errorPage";
     }
 
     @RequestMapping(value = "/closeOrder", method = RequestMethod.POST)
@@ -125,8 +134,8 @@ public class MainPageController extends AbstractController {
             try {
                 orderService.closeOrder(id);
                 return REDIRECT + "/";
-            } catch (EntityUpdateException e) {
-                return REDIRECT + "/error?msg=" + e.getMessage();
+            } catch (EntityUpdatingException e) {
+                return "errorPage";
             }
         }
 
@@ -135,12 +144,11 @@ public class MainPageController extends AbstractController {
                 orderService.deleteOrder(id);
                 return REDIRECT + "/";
             } catch (EntityException e) {
-                return REDIRECT + "/error?msg" + e.getMessage();
+                return "errorPage";
             }
         }
 
         return "errorPage";
-
     }
 }
 

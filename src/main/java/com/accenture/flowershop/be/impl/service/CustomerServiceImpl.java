@@ -1,7 +1,10 @@
 package com.accenture.flowershop.be.impl.service;
 
 import com.accenture.flowershop.be.api.dao.CustomerDAO;
-import com.accenture.flowershop.be.api.exceptions.EntityException;
+import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
+import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
+import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
+import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.AddressService;
 import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.entity.address.Address;
@@ -20,7 +23,7 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implements CustomerService {
+public class CustomerServiceImpl extends AbstractServiceImpl implements CustomerService {
     public static final String ERROR_CUSTOMER_EXISTS_BY_PHONE = "Customer with phone: {0} already exists!";
     public static final String ERROR_CUSTOMER_EXISTS_BY_EMAIL = "Customer with email: {0} already exists!";
 
@@ -37,53 +40,59 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     }
 
     public Integer insertCustomer(String name, String secondName, String fatherName, Integer addressId,
-                               String phone, Double balance, Short discount, String email) {
+                                  String phone, Double balance, Short discount, String email) throws EntityCreatingException {
         CommonUtils.assertValues(getCustomerFieldsValues(null, name, secondName, fatherName, addressId,
                 phone, balance, discount, email));
 
         if (isCustomerExistsByPhone(phone)) {
-            throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
+            throw new EntityCreatingException(ex);
         }
         if (isCustomerExistsByEmail(email)) {
-            throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
+            throw new EntityCreatingException(ex);
         }
         Address address = addressService.findAddressById(addressId);
         if (address == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
+            throw new EntityCreatingException(ex);
         }
 
 
         Customer customer = createCustomer(name, secondName, fatherName, address, phone, balance, discount, email);
+        validateEntity(customer, (ex -> {
+            throw new EntityCreatingException(ex);
+        }));
+
         customerDAO.insert(customer);
         return customer.getId();
     }
 
     public void updateCustomer(Integer customerId, String name, String secondName, String fatherName, Integer addressId,
-                               String phone, Double balance, Short discount, String email) {
-       CommonUtils.assertValues(getCustomerFieldsValues(customerId, name, secondName, fatherName, addressId, phone,
-               balance, discount, email));
+                               String phone, Double balance, Short discount, String email) throws EntityUpdatingException {
+        CommonUtils.assertValues(getCustomerFieldsValues(customerId, name, secondName, fatherName, addressId, phone,
+                balance, discount, email));
 
         Customer customer = findCustomerById(customerId);
         if (customer == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            throw new EntityUpdatingException(ex);
         }
         Address address = addressService.findAddressById(addressId);
         if (address == null) {
-            throw new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
+            throw new EntityUpdatingException(ex);
         }
         if (!customer.getPhone().equalsIgnoreCase(phone)) {
             if (isCustomerExistsByPhone(phone)) {
-                throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
-            }
-        }
-        if (!customer.getPhone().equalsIgnoreCase(phone)) {
-            if (isCustomerExistsByPhone(phone)) {
-                throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
+                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
+                throw new EntityUpdatingException(ex);
             }
         }
         if (!customer.getEmail().equalsIgnoreCase(email)) {
             if (isCustomerExistsByEmail(email)) {
-                throw new EntityException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
+                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
+                throw new EntityUpdatingException(ex);
             }
         }
 
@@ -94,15 +103,20 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
         customer.setName(name);
         customer.setPhone(phone);
         customer.setSecondName(secondName);
+        validateEntity(customer, (ex) -> {
+            throw new EntityUpdatingException(ex);
+        });
+
         customerDAO.update(customer);
     }
 
-    public void deleteCustomer(Integer customerId) {
+    public void deleteCustomer(Integer customerId) throws EntityDeletingException {
         CommonUtils.assertNull(customerId, ERROR_ENTITY_ID_NULL);
 
         Customer customer = findCustomerById(customerId);
         if (customer == null) {
-            throw  new EntityException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+            throw new EntityUpdatingException(ex);
         }
 
         customerDAO.delete(customer);
@@ -125,7 +139,7 @@ public class CustomerServiceImpl extends AbstractServiceImpl<Customer> implement
     }
 
     private Customer createCustomer(String name, String secondName, String fatherName,
-                                    Address address, String phone, Double balance, Short discount, String email)  {
+                                    Address address, String phone, Double balance, Short discount, String email) {
         return new Customer.Builder(name, secondName, address, phone, balance, discount, email).fatherName(fatherName).build();
     }
 

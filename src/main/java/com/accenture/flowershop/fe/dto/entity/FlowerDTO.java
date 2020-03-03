@@ -1,6 +1,6 @@
 package com.accenture.flowershop.fe.dto.entity;
 
-public class FlowerDTO extends AbstractDTO{
+public class FlowerDTO extends AbstractDTO {
     private String name;
     private Double price;
     private Integer quantityInStock;

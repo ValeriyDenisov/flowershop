@@ -4,5 +4,5 @@ import java.util.Map;
 
 @FunctionalInterface
 public interface FieldsValues {
-    Map<String, Object> getFieldValue();
+    Map<String, Object> getFieldsValue();
 }

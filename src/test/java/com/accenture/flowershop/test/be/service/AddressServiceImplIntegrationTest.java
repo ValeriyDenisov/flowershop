@@ -1,19 +1,15 @@
 package com.accenture.flowershop.test.be.service;
 
 
-import com.accenture.flowershop.be.api.exceptions.EntityException;
+import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
+import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.AddressService;
-import com.accenture.flowershop.be.entity.address.Address;
-import com.accenture.flowershop.test.be.AbstractTest;
-import org.junit.Assert;
-import org.junit.Ignore;
+import com.accenture.flowershop.test.be.AbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.text.MessageFormat;
-
-public class AddressServiceImplTest extends AbstractTest {
+public class AddressServiceImplIntegrationTest extends AbstractIntegrationTest {
     public static final String ADDRESS_TABLE_NAME = "addresses";
     public static final String ADDRESS_STREET_1 = "street_1";
     public static final String ADDRESS_CITY_1 = "city_1";
@@ -27,21 +23,17 @@ public class AddressServiceImplTest extends AbstractTest {
     @Autowired
     AddressService addressService;
 
-    @Test(expected = EntityException.class)
+    @Test(expected = EntityUpdatingException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/address/create_address_table.sql"})
     public void updateAddressNotFoundTest() {
         addressService.updateAddress(404, ADDRESS_STREET_2, ADDRESS_CITY_2, ADDRESS_CODE_1, ADDRESS_BUILDING_2);
     }
 
-    @Test(expected = EntityException.class)
+    @Test(expected = EntityDeletingException.class)
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/address/create_address_table.sql"})
     public void deleteAddressNotFoundTest() {
         addressService.deleteAddress(404);
-    }
-
-    private Address createAddress(String street, String city, Integer code, Integer building) {
-        return new Address.Builder(street, city, code, building).build();
     }
 }

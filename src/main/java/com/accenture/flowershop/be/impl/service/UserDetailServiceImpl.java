@@ -3,9 +3,6 @@ package com.accenture.flowershop.be.impl.service;
 import com.accenture.flowershop.be.api.service.UserService;
 import com.accenture.flowershop.be.entity.enums.Role;
 import com.accenture.flowershop.be.entity.user.AbstractUser;
-import com.accenture.flowershop.be.entity.user.AdminUser;
-import com.accenture.flowershop.be.entity.user.User;
-import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserDetailServiceImpl extends AbstractServiceImpl<User> implements UserDetailsService {
+public class UserDetailServiceImpl extends AbstractServiceImpl implements UserDetailsService {
 
     @Autowired
     UserService userService;

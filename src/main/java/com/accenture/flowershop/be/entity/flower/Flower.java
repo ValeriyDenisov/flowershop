@@ -1,11 +1,11 @@
 package com.accenture.flowershop.be.entity.flower;
 
-import com.accenture.flowershop.be.entity.address.Address;
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "flowers")
@@ -13,12 +13,18 @@ public class Flower extends AbstractEntity {
     public static final String NAME = "name";
 
     @Column(name = "name")
+    @NotBlank(message = "Flower name is empty!")
+    @Size(min = 2, max = 50, message = "Flower name size is incorrect!")
     private String name;
 
     @Column(name = "price")
+    @NotNull(message = "Flower price is null!")
+    @Positive(message = "Flower price is negative!")
     private Double price;
 
     @Column(name = "quantity_in_stock")
+    @NotNull(message = "Flower quantity in stock is null!")
+    @Min(value = 0, message = "Customer discount is negative!")
     private Integer quantityInStock;
 
     public String getName() {
@@ -47,12 +53,15 @@ public class Flower extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Flower{" +
-                "id=" + (id != null ? id : "") +
-                ", name=" + name +
-                ", price=" + price +
-                ", quantityInStock=" + quantityInStock +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("Flower{")
+                .append("id=").append(id != null ? id : "")
+                .append(", name= ").append(name)
+                .append(", price= ").append(price)
+                .append(", quantityInStock= ").append(quantityInStock)
+                .append("}");
+        return builder.toString();
     }
 
     public static class Builder {

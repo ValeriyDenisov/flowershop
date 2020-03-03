@@ -1,17 +1,15 @@
 package com.accenture.flowershop.be.impl.utils;
 
 import com.accenture.flowershop.be.api.functional.FieldsValues;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.accenture.flowershop.be.entity.common.AbstractEntity;
 import org.springframework.util.StringUtils;
 
+import javax.validation.ConstraintViolation;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class CommonUtils {
-    private static PasswordEncoder passwordEncoder;
-
-
     public static void assertNull(Object value, String msg) {
         if (value == null) {
             throw new IllegalArgumentException(msg);
@@ -25,7 +23,7 @@ public abstract class CommonUtils {
     }
 
     public static void assertValues(Map<String, Object> values) {
-        for (String field: values.keySet()) {
+        for (String field : values.keySet()) {
             Object value = values.get(field);
             if (value instanceof String) {
                 assertEmpty((String) value, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, field));
@@ -36,15 +34,21 @@ public abstract class CommonUtils {
     }
 
     public static Map<String, Object> getFieldsValues(FieldsValues fieldsValues) {
-        return fieldsValues.getFieldValue();
+        return fieldsValues.getFieldsValue();
     }
 
-    public static PasswordEncoder getPasswordEncoder() {
-        if (passwordEncoder != null) {
-            return passwordEncoder;
-        } else {
-            return passwordEncoder = new BCryptPasswordEncoder();
+    public static <T extends AbstractEntity> String getViolationErrorsToString(Set<ConstraintViolation<T>> constraintViolations) {
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("Violation errors: ")
+                .append("\n");
+        for (ConstraintViolation<T> constraintViolation : constraintViolations) {
+            builder
+                    .append("{ ")
+                    .append(constraintViolation.getMessage())
+                    .append(" }")
+                    .append("\n");
         }
+        return builder.toString();
     }
-
 }

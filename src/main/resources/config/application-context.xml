@@ -22,6 +22,11 @@
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <bean id="validatorFactory" class="javax.validation.Validation" factory-method="buildDefaultValidatorFactory"/>
+
+    <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator"/>
 
     <bean id="entityManager" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceProviderClass"

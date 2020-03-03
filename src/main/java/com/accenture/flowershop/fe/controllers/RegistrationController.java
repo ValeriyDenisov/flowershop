@@ -1,6 +1,6 @@
 package com.accenture.flowershop.fe.controllers;
 
-import com.accenture.flowershop.be.api.exceptions.EntityCreationException;
+import com.accenture.flowershop.be.api.exceptions.EntityException;
 import com.accenture.flowershop.be.api.service.FlowershopService;
 import com.accenture.flowershop.fe.formdata.RegistrationFD;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/registration")
-public class RegistrationController extends AbstractController{
+public class RegistrationController extends AbstractController {
     public static final String ERROR_CONFIRM_PASSWORD = "Passwords does not same";
 
     @Autowired
@@ -51,12 +51,12 @@ public class RegistrationController extends AbstractController{
             Authentication authentication = new UsernamePasswordAuthenticationToken(registration.getEmail(),
                     registration.getPassword());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (EntityCreationException e) {
+        } catch (EntityException e) {
             registration.setError(e.getMessage());
             model.addAttribute("registration", registration);
             return "registrationPage";
         }
 
-        return "redirect:/";
+        return REDIRECT + "/";
     }
 }

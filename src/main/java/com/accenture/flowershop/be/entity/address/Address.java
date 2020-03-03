@@ -5,21 +5,33 @@ import com.accenture.flowershop.be.entity.common.AbstractEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "addresses")
 public class Address extends AbstractEntity {
 
     @Column(name = "street", nullable = false)
+    @NotBlank(message = "Street name is empty!")
+    @Size(min = 2, max = 50, message = "Size of street name is incorrect!")
     private String street;
 
     @Column(name = "city", nullable = false)
+    @NotBlank(message = "City name is empty!")
+    @Size(min = 2, max = 50, message = "Size of city name is incorrect!")
     private String city;
 
     @Column(name = "code", nullable = false)
+    @NotNull(message = "Address code is null!")
+    @Positive(message = "Address code is negative number!")
     private Integer code;
 
     @Column(name = "building", nullable = false)
+    @NotNull(message = "Building number is null!")
+    @Positive(message = "Building number mis negative!")
     private Integer building;
 
     public String getStreet() {
@@ -56,13 +68,16 @@ public class Address extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Address{" +
-                "id=" + (id != null ? id : "") +
-                ", street=" + street +
-                ", city=" + city +
-                ", code=" + code +
-                ", building=" + building +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("Address{")
+                .append("id=").append(id != null ? id : "")
+                .append(", street= ").append(street)
+                .append(", city= ").append(city)
+                .append(", code= ").append(code)
+                .append(", building= ").append(building)
+                .append("}");
+        return builder.toString();
     }
 
     public static class Builder {

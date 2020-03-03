@@ -2,9 +2,10 @@ package com.accenture.flowershop.be.entity.customer;
 
 import com.accenture.flowershop.be.entity.address.Address;
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "customers")
@@ -14,27 +15,44 @@ public class Customer extends AbstractEntity {
 
     @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "address_id", nullable = false)
+    @NotNull(message = "Customer address is null!")
+    @Valid
     private Address address;
 
     @Column(name = "name", nullable = false)
+    @NotBlank(message = "Customer name is empty!")
+    @Size(min = 2, max = 50, message = "Customer name size is incorrect!")
     private String name;
 
     @Column(name = "second_name", nullable = false)
+    @NotBlank(message = "Customer second name is empty!")
+    @Size(min = 2, max = 50, message = "Customer second name size is incorrect!")
     private String secondName;
 
     @Column(name = "father_name")
+    @Size(min = 2, max = 50, message = "Customer father name size is incorrect!")
     private String fatherName;
 
     @Column(name = "phone", unique = true, nullable = false)
+    @NotBlank(message = "Customer phone number is empty!")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Customer phone number is incorrect!")
     private String phone;
 
     @Column(name = "balance", nullable = false)
+    @Min(value = 0, message = "Customer balance is negative!")
+    @NotNull(message = "Customer balance is null!")
     private Double balance;
 
     @Column(name = "discount", nullable = false)
+    @NotNull(message = "Customer discount is null!")
+    @Min(value = 0, message = "Customer discount is negative!")
+    @Max(value = 100, message = "Customer discount more than 100%!")
     private Short discount;
 
     @Column(name = "email", nullable = false, unique = true)
+    @NotBlank(message = "Customer email is empty!")
+    @Size(min = 5, max = 50, message = "Customer email size is incorrect")
+    @Email(message = "Customer email is incorrect!")
     private String email;
 
     public String getEmail() {
@@ -103,16 +121,20 @@ public class Customer extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Customer{" +
-                "id=" + (id != null ? id : "") +
-                ", name=" + name +
-                ", secondName=" + secondName +
-                ", fatherName=" + (fatherName != null ? fatherName : "") +
-                ", address=" + address.toString() +
-                ", phone=" + phone +
-                ", balance=" + balance +
-                ", discount=" + discount +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("Customer{")
+                .append("id=").append(id != null ? id : "")
+                .append(", name= ").append(name)
+                .append(", secondName= ").append(secondName)
+                .append(", fatherName= ").append(fatherName != null ? fatherName : "")
+                .append(", address= ").append(address.toString())
+                .append(", phone= ").append(phone)
+                .append(", balance= ").append(balance)
+                .append(", discount= ").append(discount)
+                .append(", email= ").append(email)
+                .append("}");
+        return builder.toString();
     }
 
     public static class Builder {
