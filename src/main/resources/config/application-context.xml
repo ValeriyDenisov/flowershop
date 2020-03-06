@@ -28,6 +28,14 @@
 
     <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator"/>
 
+    <bean id="dozerMapper" class="org.dozer.DozerBeanMapper">
+        <property name="mappingFiles" >
+            <list>
+                <value>META-INF/dozer/mapping.xml</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="entityManager" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceProviderClass"
                   value="org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider"/>

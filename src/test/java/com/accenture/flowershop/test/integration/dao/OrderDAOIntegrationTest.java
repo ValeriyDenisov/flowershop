@@ -1,8 +1,8 @@
-package com.accenture.flowershop.test.be.dao;
+package com.accenture.flowershop.test.integration.dao;
 
 import com.accenture.flowershop.be.api.dao.OrderDAO;
 import com.accenture.flowershop.be.entity.order.Order;
-import com.accenture.flowershop.test.be.AbstractIntegrationTest;
+import com.accenture.flowershop.test.integration.AbstractIntegrationTest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;

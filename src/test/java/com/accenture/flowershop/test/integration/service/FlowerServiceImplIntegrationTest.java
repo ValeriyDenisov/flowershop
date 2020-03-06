@@ -1,10 +1,10 @@
-package com.accenture.flowershop.test.be.service;
+package com.accenture.flowershop.test.integration.service;
 
 import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
 import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.FlowerService;
-import com.accenture.flowershop.test.be.AbstractIntegrationTest;
+import com.accenture.flowershop.test.integration.AbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;

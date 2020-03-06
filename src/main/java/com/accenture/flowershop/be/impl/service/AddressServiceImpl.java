@@ -10,8 +10,11 @@ import com.accenture.flowershop.be.entity.address.Address;
 import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -19,20 +22,31 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class AddressServiceImpl extends AbstractServiceImpl implements AddressService {
 
     @Autowired
     AddressDAO addressDAO;
 
     public Integer insertAddress(String street, String city, Integer code, Integer building) throws EntityCreatingException {
-        CommonUtils.assertValues(getAddressFieldsValues(null, street, city, code, building));
+        try {
+            CommonUtils.assertValues(getAddressFieldsValues(null, street, city, code, building));
+        } catch (IllegalArgumentException e) {
+            throw new EntityCreatingException(e);
+        }
+
 
         Address address = createAddress(street, city, code, building);
         validateEntity(address, (ex) -> {
             throw new EntityCreatingException(ex);
         });
 
-        addressDAO.insert(address);
+        try {
+            addressDAO.insert(address);
+        } catch (HibernateException e) {
+            throw new EntityCreatingException(e);
+        }
+
         return address.getId();
     }
 
@@ -45,11 +59,15 @@ public class AddressServiceImpl extends AbstractServiceImpl implements AddressSe
             throw new EntityDeletingException(e);
         }
 
-        addressDAO.delete(address);
+        try {
+            addressDAO.delete(address);
+        } catch (HibernateException e) {
+            throw new EntityDeletingException(e);
+        }
     }
 
     public void updateAddress(Integer id, String street, String city, Integer code, Integer building) throws EntityUpdatingException {
-        CommonUtils.assertValues(getAddressFieldsValues(id, street, city, code, building));
+        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
 
         Address address = findAddressById(id);
         if (address == null) {
@@ -57,15 +75,27 @@ public class AddressServiceImpl extends AbstractServiceImpl implements AddressSe
             throw new EntityUpdatingException(e);
         }
 
-        address.setStreet(street);
-        address.setCode(code);
-        address.setCity(city);
-        address.setBuilding(building);
+        if (StringUtils.isNotEmpty(street) && !street.equalsIgnoreCase(address.getStreet())) {
+            address.setStreet(street);
+        }
+        if (code != null && code.equals(address.getCode())) {
+            address.setCode(code);
+        }
+        if (StringUtils.isNotEmpty(city) && !city.equalsIgnoreCase(address.getCity())) {
+            address.setCity(city);
+        }
+        if (building != null && !building.equals(address.getBuilding())) {
+            address.setBuilding(building);
+        }
         validateEntity(address, (ex) -> {
             throw new EntityUpdatingException(ex);
         });
 
-        addressDAO.update(address);
+        try {
+            addressDAO.update(address);
+        } catch (HibernateException e) {
+            throw new EntityUpdatingException(e);
+        }
     }
 
     public Address findAddressById(Integer id) {

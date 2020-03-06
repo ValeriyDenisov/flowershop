@@ -5,6 +5,8 @@ import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.entity.user.User;
 
+import java.util.List;
+
 public interface UserService {
     Integer insertUser(String login, String password) throws EntityCreatingException;
 
@@ -12,8 +14,10 @@ public interface UserService {
 
     void deleteUser(Integer id) throws EntityDeletingException;
 
-    User findById(Integer id);
+    User findUserById(Integer id);
 
-    User findByLogin(String login);
+    User findUserByLogin(String login);
+
+    List<User> findAllUsers();
 
 }

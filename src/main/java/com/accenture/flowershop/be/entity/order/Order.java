@@ -39,14 +39,10 @@ public class Order extends AbstractEntity {
 
     @Column(name = "is_active")
     @NotNull(message = "Order active is null!")
-    private Boolean isActive;
+    private Boolean active;
 
     @Transient
     private Cart cart;
-
-    public Boolean getActive() {
-        return isActive;
-    }
 
     public Cart getCart() {
         return cart;
@@ -80,12 +76,12 @@ public class Order extends AbstractEntity {
         this.closeDate = closeDate;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public Boolean getActive() {
+        return active;
     }
 
     public void setActive(Boolean active) {
-        isActive = active;
+        this.active = active;
     }
 
     public Customer getCustomer() {
@@ -104,7 +100,7 @@ public class Order extends AbstractEntity {
                 .append("id=").append(id != null ? id : "")
                 .append(", customer= ").append(customer.toString())
                 .append(", price= ").append(price)
-                .append(", isActive= ").append(isActive)
+                .append(", isActive= ").append(active)
                 .append(", openDate= ").append(openDate.getTime().toString())
                 .append(", closeDate= ").append(closeDate != null ? closeDate.getTime().toString() : "")
                 .append("}");
@@ -115,15 +111,15 @@ public class Order extends AbstractEntity {
         private Integer id;
         private Customer customer;
         private Double price;
-        private Boolean isActive;
+        private Boolean active;
         private Calendar openDate;
         private Calendar closeDate;
 
-        public Builder(Customer customer, Double price, Boolean isActive,
+        public Builder(Customer customer, Double price, Boolean active,
                        Calendar openDate) {
             this.customer = customer;
             this.price = price;
-            this.isActive = isActive;
+            this.active = active;
             this.openDate = openDate;
         }
 
@@ -145,7 +141,7 @@ public class Order extends AbstractEntity {
     private Order(Builder builder) {
         this.customer = builder.customer;
         this.price = builder.price;
-        this.isActive = builder.isActive;
+        this.active = builder.active;
         this.openDate = builder.openDate;
         this.id = builder.id;
         this.closeDate = builder.closeDate;

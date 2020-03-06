@@ -21,6 +21,14 @@
 
     <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator"/>
 
+    <bean id="dozerMapper" class="org.dozer.DozerBeanMapper">
+        <property name="mappingFiles" >
+            <list>
+                <value>META-INF/dozer/mapping.xml</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${test.jdbc.driverClassName}"/>
         <property name="url" value="${test.jdbc.url}"/>

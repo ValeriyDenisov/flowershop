@@ -20,7 +20,7 @@ public class OrderDTOConverter extends AbstractDTOConverter<OrderDTO, Order> {
         CommonUtils.assertNull(entity, MessageFormat.format(ERROR_ENTITY_NULL, Constants.ENTITY_ORDER));
 
         OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setActive(entity.getIsActive());
+        orderDTO.setActive(entity.getActive());
         if (entity.getCloseDate() != null) {
             orderDTO.setCloseDate(entity.getCloseDate().getTime().toString());
         }

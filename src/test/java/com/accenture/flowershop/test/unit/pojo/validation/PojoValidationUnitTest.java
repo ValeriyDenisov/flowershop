@@ -1,4 +1,4 @@
-package com.accenture.flowershop.test.be.pojo.validation;
+package com.accenture.flowershop.test.unit.pojo.validation;
 
 import com.accenture.flowershop.be.entity.address.Address;
 import com.accenture.flowershop.be.entity.customer.Customer;

@@ -10,7 +10,7 @@
 
         <attributes>
             <id name="id">
-                <generated-value strategy="TABLE"/>
+                <generated-value strategy="AUTO"/>
             </id>
         </attributes>
     </mapped-superclass>

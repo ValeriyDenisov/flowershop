@@ -9,8 +9,11 @@ import com.accenture.flowershop.be.api.service.FlowerService;
 import com.accenture.flowershop.be.entity.flower.Flower;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class FlowerServiceImpl extends AbstractServiceImpl implements FlowerService {
     public static final String ERROR_FLOWER_EXISTS_BY_NAME = "Flower with name: {0} already exists!";
 
@@ -36,7 +40,7 @@ public class FlowerServiceImpl extends AbstractServiceImpl implements FlowerServ
         return flowerDAO.findById(id);
     }
 
-    public List<Flower> findAllFlower() {
+    public List<Flower> findAllFlowers() {
         return flowerDAO.findAll();
     }
 
@@ -53,33 +57,46 @@ public class FlowerServiceImpl extends AbstractServiceImpl implements FlowerServ
             throw new EntityCreatingException(ex);
         });
 
-        flowerDAO.insert(flower);
+        try {
+            flowerDAO.insert(flower);
+        } catch (HibernateException e) {
+            throw new EntityCreatingException(e);
+        }
         return flower.getId();
     }
 
     public void updateFlower(Integer flowerId, String name, Double price, Integer quantityInStock) throws EntityUpdatingException {
-        CommonUtils.assertValues(getFlowersFieldsValues(flowerId, name, price, quantityInStock));
+        CommonUtils.assertNull(flowerId, ERROR_ENTITY_ID_NULL);
 
         Flower flower = findFlowerById(flowerId);
         if (flower == null) {
             EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Flower.class, flowerId));
             throw new EntityUpdatingException(ex);
         }
-        if (!flower.getName().equalsIgnoreCase(name)) {
+
+
+        if (StringUtils.isNotEmpty(name) && !name.equalsIgnoreCase(flower.getName())) {
             if (isFlowerExistByName(name)) {
                 EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_FLOWER_EXISTS_BY_NAME, name));
                 throw new EntityUpdatingException(ex);
             }
+            flower.setName(name);
         }
-
-        flower.setName(name);
-        flower.setPrice(price);
-        flower.setQuantityInStock(quantityInStock);
+        if (price != null && price != 0.0) {
+            flower.setPrice(price);
+        }
+        if (quantityInStock != null && !quantityInStock.equals(flower.getQuantityInStock())) {
+            flower.setQuantityInStock(quantityInStock);
+        }
         validateEntity(flower, (ex -> {
             throw new EntityUpdatingException(ex);
         }));
 
-        flowerDAO.update(flower);
+        try {
+            flowerDAO.update(flower);
+        } catch (HibernateException e) {
+            throw new EntityUpdatingException(e);
+        }
     }
 
     public void deleteFlower(Integer flowerId) throws EntityDeletingException {
@@ -91,7 +108,11 @@ public class FlowerServiceImpl extends AbstractServiceImpl implements FlowerServ
             throw new EntityDeletingException(ex);
         }
 
-        flowerDAO.delete(flower);
+        try {
+            flowerDAO.delete(flower);
+        } catch (HibernateException e) {
+            throw new EntityDeletingException(e);
+        }
     }
 
     @Override

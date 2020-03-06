@@ -12,6 +12,7 @@ import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
 import com.accenture.flowershop.fe.application.Cart;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,6 @@ public class OrderServiceImpl extends AbstractServiceImpl implements OrderServic
         return orderDAO.findById(id);
     }
 
-    @Transactional
     public Integer insertOrder(Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate)
             throws EntityCreatingException {
         CommonUtils.assertValues(getOrderFieldsValues(null, customerId, price, openDate, closeDate, isActive));
@@ -56,36 +56,55 @@ public class OrderServiceImpl extends AbstractServiceImpl implements OrderServic
             throw new EntityCreatingException(ex);
         });
 
-        orderDAO.insert(order);
+        try {
+            orderDAO.insert(order);
+        } catch (HibernateException e) {
+            throw new EntityCreatingException(e);
+        }
         return order.getId();
     }
 
-    @Transactional
+
     public void updateOrder(Integer orderId, Integer customerId, Double price,
                             Boolean isActive, Calendar openDate, Calendar closeDate) throws EntityUpdatingException {
-        CommonUtils.assertValues(getOrderFieldsValues(orderId, customerId, price, openDate, closeDate, isActive));
+        CommonUtils.assertNull(orderId, ERROR_ENTITY_ID_NULL);
 
         Order order = findOrderById(orderId);
         if (order == null) {
             EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Order.class, orderId));
             throw new EntityUpdatingException(ex);
         }
-        Customer customer = customerService.findCustomerById(customerId);
-        if (customer == null) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
-            throw new EntityUpdatingException(ex);
-        }
 
-        order.setActive(isActive);
-        order.setCloseDate(closeDate);
-        order.setCustomer(customer);
-        order.setOpenDate(openDate);
-        order.setPrice(price);
+
+        if (isActive != null && isActive != order.getActive()) {
+            order.setActive(isActive);
+        }
+        if (closeDate != null && !closeDate.equals(order.getCloseDate())) {
+            order.setCloseDate(closeDate);
+        }
+        if (customerId != null && !customerId.equals(order.getCustomer().getId())) {
+            Customer customer = customerService.findCustomerById(customerId);
+            if (customer == null) {
+                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
+                throw new EntityUpdatingException(ex);
+            }
+            order.setCustomer(customer);
+        }
+        if (openDate != null && !openDate.equals(order.getOpenDate())) {
+            order.setOpenDate(openDate);
+        }
+        if (price != null) {
+            order.setPrice(price);
+        }
         validateEntity(order, (ex) -> {
             throw new EntityUpdatingException(ex);
         });
 
-        orderDAO.update(order);
+        try {
+            orderDAO.update(order);
+        } catch (HibernateException e) {
+            throw new EntityUpdatingException(e);
+        }
     }
 
     @Override
@@ -107,7 +126,12 @@ public class OrderServiceImpl extends AbstractServiceImpl implements OrderServic
                 customer.getAddress().getId(), customer.getPhone(), customer.getBalance() - order.getPrice(), customer.getDiscount(), customer.getEmail());
         order.setCloseDate(Calendar.getInstance());
         order.setActive(false);
-        orderDAO.update(order);
+
+        try {
+            orderDAO.update(order);
+        } catch (HibernateException e) {
+            throw new EntityUpdatingException(e);
+        }
     }
 
     public void deleteOrder(Integer id) throws EntityDeletingException {
@@ -119,11 +143,14 @@ public class OrderServiceImpl extends AbstractServiceImpl implements OrderServic
             throw new EntityDeletingException(ex);
         }
 
-        orderDAO.delete(order);
+        try {
+            orderDAO.delete(order);
+        } catch (HibernateException e) {
+            throw new EntityDeletingException(e);
+        }
     }
 
     @Override
-    @Transactional
     public void createOrder(Double price, String customerEmail, Cart cart) throws EntityCreatingException {
         CommonUtils.assertNull(price, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.ORDER_PRICE));
         CommonUtils.assertEmpty(customerEmail, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_EMAIL));
@@ -140,7 +167,11 @@ public class OrderServiceImpl extends AbstractServiceImpl implements OrderServic
             throw new EntityCreatingException(ex);
         }));
 
-        orderDAO.insert(order);
+        try {
+            orderDAO.insert(order);
+        } catch (HibernateException e) {
+            throw new EntityCreatingException(e);
+        }
     }
 
     @Override

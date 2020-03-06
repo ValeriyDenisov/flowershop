@@ -1,0 +1,569 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ac="http://accenture.com/flowershop/schemas"
+           elementFormDefault="qualified"
+           targetNamespace="http://accenture.com/flowershop/schemas">
+    <xs:element name="createAddressRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="city" type="xs:string"/>
+                <xs:element name="street" type="xs:string"/>
+                <xs:element name="code" type="xs:int"/>
+                <xs:element name="building" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createAddressResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAddressByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAddressByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="address" type="ac:XmlAddress" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateAddressByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+                <xs:element name="city" type="xs:string" minOccurs="0"/>
+                <xs:element name="street" type="xs:string" minOccurs="0"/>
+                <xs:element name="code" type="xs:int" minOccurs="0"/>
+                <xs:element name="building" type="xs:int" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateAddressByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteAddressByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteAddressByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllAddressesRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllAddressesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="addresses" type="ac:XmlAddress" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createCustomerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="secondName" type="xs:string"/>
+                <xs:element name="fatherName" type="xs:string" minOccurs="0"/>
+                <xs:element name="addressId" type="xs:int"/>
+                <xs:element name="phone" type="xs:string"/>
+                <xs:element name="email" type="xs:string"/>
+                <xs:element name="balance" type="xs:double"/>
+                <xs:element name="discount" type="xs:short"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createCustomerResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findCustomerByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findCustomerByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="customer" type="ac:XmlCustomer"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateCustomerByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+                <xs:element name="name" type="xs:string" minOccurs="0"/>
+                <xs:element name="secondName" type="xs:string" minOccurs="0"/>
+                <xs:element name="fatherName" type="xs:string" minOccurs="0"/>
+                <xs:element name="addressId" type="xs:int" minOccurs="0"/>
+                <xs:element name="phone" type="xs:string" minOccurs="0"/>
+                <xs:element name="email" type="xs:string" minOccurs="0"/>
+                <xs:element name="balance" type="xs:double" minOccurs="0"/>
+                <xs:element name="discount" type="xs:short" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateCustomerByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteCustomerByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteCustomerByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllCustomersRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllCustomersResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="customers" type="ac:XmlCustomer" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createOrderRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="price" type="xs:double"/>
+                <xs:element name="customerId" type="xs:int"/>
+                <xs:element name="active" type="xs:boolean"/>
+                <xs:element name="openDate" type="xs:date"/>
+                <xs:element name="closeDate" type="xs:date"/>
+                <xs:element name="cart" type="ac:XmlCart" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createOrderResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findOrderByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findOrderByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="order" type="ac:XmlOrder"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateOrderByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+                <xs:element name="active" type="xs:boolean" minOccurs="0"/>
+                <xs:element name="price" type="xs:double" minOccurs="0"/>
+                <xs:element name="openDate" type="xs:date" minOccurs="0"/>
+                <xs:element name="closeDate" type="xs:date" minOccurs="0"/>
+                <xs:element name="customerId" type="xs:int" minOccurs="0"/>
+                <xs:element name="cart" type="ac:XmlCart" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateOrderByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteOrderByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteOrderByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllOrdersRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllOrdersResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="orders" type="ac:XmlOrder" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createFlowerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="price" type="xs:double"/>
+                <xs:element name="quantityInStock" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createFlowerResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findFlowerByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findFlowerByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="flower" type="ac:XmlFlower"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateFlowerByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="price" type="xs:double"/>
+                <xs:element name="quantityInStock" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateFlowerByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteFlowerByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteFlowerByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllFlowersRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllFlowersResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="flowers" type="ac:XmlFlower" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="role" type="ac:Role"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findUserByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findUserByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="user" type="ac:xmlUser"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateUserByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+                <xs:element name="login" type="xs:string" minOccurs="0"/>
+                <xs:element name="password" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateUserByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteUserByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteUserByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllUsersRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="findAllUsersResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="ac:Response"/>
+                <xs:element name="users" type="ac:xmlUser" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="XmlAddress">
+        <xs:complexContent>
+            <xs:extension base="ac:XmlAbstractEntity">
+                <xs:sequence>
+                    <xs:element name="street" type="xs:string"/>
+                    <xs:element name="city" type="xs:string"/>
+                    <xs:element name="code" type="xs:int"/>
+                    <xs:element name="building" type="xs:int"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="XmlCart">
+        <xs:sequence>
+            <xs:element name="flowers" type="ac:XmlFlowerInformation" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="XmlFlowerInformation">
+        <xs:sequence>
+            <xs:element name="flower" type="ac:XmlFlower"/>
+            <xs:element name="countToOrder" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="XmlFlower">
+        <xs:complexContent>
+            <xs:extension base="ac:XmlAbstractEntity">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="price" type="xs:double"/>
+                    <xs:element name="quantityInStock" type="xs:int"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
+    <xs:complexType name="XmlCustomer">
+        <xs:complexContent>
+            <xs:extension base="ac:XmlAbstractEntity">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="secondName" type="xs:string"/>
+                    <xs:element name="fatherName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="address" type="ac:XmlAddress"/>
+                    <xs:element name="phone" type="xs:string"/>
+                    <xs:element name="balance" type="xs:double"/>
+                    <xs:element name="discount" type="xs:int"/>
+                    <xs:element name="email" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
+    <xs:complexType name="XmlOrder">
+        <xs:complexContent>
+            <xs:extension base="ac:XmlAbstractEntity">
+                <xs:sequence>
+                    <xs:element name="price" type="xs:double"/>
+                    <xs:element name="customer" type="ac:XmlCustomer"/>
+                    <xs:element name="active" type="xs:boolean"/>
+                    <xs:element name="openDate" type="xs:date"/>
+                    <xs:element name="closeDate" type="xs:date" minOccurs="0"/>
+                    <xs:element name="cart" type="ac:XmlCart" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Response">
+        <xs:sequence>
+            <xs:element name="status" type="ac:OperationStatus"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OperationStatus">
+        <xs:sequence>
+            <xs:element name="status" type="ac:Status"/>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="xmlUser">
+        <xs:complexContent>
+            <xs:extension base="ac:XmlAbstractEntity">
+                <xs:sequence>
+                    <xs:element name="login" type="xs:string"/>
+                    <xs:element name="password" type="xs:string"/>
+                    <xs:element name="role" type="ac:Role"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="Status">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUCCESS"/>
+            <xs:enumeration value="ERROR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Role">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="USER"/>
+            <xs:enumeration value="ADMIN"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="XmlAbstractEntity">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

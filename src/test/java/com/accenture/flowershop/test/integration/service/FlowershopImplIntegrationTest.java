@@ -1,4 +1,4 @@
-package com.accenture.flowershop.test.be.service;
+package com.accenture.flowershop.test.integration.service;
 
 
 import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
@@ -6,14 +6,14 @@ import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
 import com.accenture.flowershop.be.api.service.FlowershopService;
 import com.accenture.flowershop.be.entity.flower.Flower;
 import com.accenture.flowershop.fe.application.Cart;
-import com.accenture.flowershop.test.be.AbstractIntegrationTest;
+import com.accenture.flowershop.test.integration.AbstractIntegrationTest;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-public class FlowershopImplTest extends AbstractIntegrationTest {
+public class FlowershopImplIntegrationTest extends AbstractIntegrationTest {
     public static final String ERROR_CART_NULL = "Cart is null!";
     public static final String ERROR_CART_EMPTY = "Cart is empty";
 

@@ -1,8 +1,8 @@
-package com.accenture.flowershop.test.be.dao;
+package com.accenture.flowershop.test.integration.dao;
 
 import com.accenture.flowershop.be.api.dao.FlowerDAO;
 import com.accenture.flowershop.be.entity.flower.Flower;
-import com.accenture.flowershop.test.be.AbstractIntegrationTest;
+import com.accenture.flowershop.test.integration.AbstractIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

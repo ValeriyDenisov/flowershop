@@ -20,7 +20,7 @@ public class UserDetailServiceImpl extends AbstractServiceImpl implements UserDe
     UserService userService;
 
     public UserDetails loadUserByUsername(String login) {
-        AbstractUser user = userService.findByLogin(login);
+        AbstractUser user = userService.findUserByLogin(login);
         Set<GrantedAuthority> roles = new HashSet<>();
         if (user.getRole().equals(Role.USER)) {
             roles.add(new SimpleGrantedAuthority("USER"));

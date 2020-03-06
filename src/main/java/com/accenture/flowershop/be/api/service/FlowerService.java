@@ -12,7 +12,7 @@ public interface FlowerService {
 
     Flower findFlowerById(Integer id);
 
-    List<Flower> findAllFlower();
+    List<Flower> findAllFlowers();
 
     Integer insertFlower(String name, Double price, Integer quantityInStock) throws EntityCreatingException;
 
