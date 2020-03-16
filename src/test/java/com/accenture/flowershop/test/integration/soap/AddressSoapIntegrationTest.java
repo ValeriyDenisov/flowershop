@@ -3,14 +3,19 @@ package com.accenture.flowershop.test.integration.soap;
 import com.accenture.flowershop.be.entity.address.Address;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.jdbc.Sql;
 
 public class AddressSoapIntegrationTest extends AbstractSoapIntegrationTest {
+
+    Logger logger = LoggerFactory.getLogger(AddressSoapIntegrationTest.class);
 
     @Test
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/address/create_address_table.sql"})
     public void createAddressTest() {
+        logger.debug("[createAddressTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -43,6 +48,7 @@ public class AddressSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/address/create_address_table.sql",
             "/sql/address/insert_address.sql"})
     public void updateAddressTest() {
+        logger.debug("[updateAddressTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -69,7 +75,7 @@ public class AddressSoapIntegrationTest extends AbstractSoapIntegrationTest {
 
         Address address = findById(1, Address.class);
         Assert.assertNotNull(address);
-        Assert.assertEquals(15, address.getBuilding());
+        Assert.assertEquals((Integer) 15, address.getBuilding());
     }
 
     @Test
@@ -77,6 +83,7 @@ public class AddressSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/address/create_address_table.sql",
             "/sql/address/insert_address.sql"})
     public void deleteAddressTest() {
+        logger.debug("[deleteAddressTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -109,6 +116,7 @@ public class AddressSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/address/create_address_table.sql",
             "/sql/address/insert_address.sql"})
     public void findAllAddressesTest() {
+        logger.debug("[findAllAddressesTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -151,6 +159,7 @@ public class AddressSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/address/create_address_table.sql",
             "/sql/address/insert_address.sql"})
     public void findAddressByIdTest() {
+        logger.debug("[findAddressByIdTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest

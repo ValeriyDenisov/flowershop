@@ -3,14 +3,19 @@ package com.accenture.flowershop.test.integration.soap;
 import com.accenture.flowershop.be.entity.flower.Flower;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.jdbc.Sql;
 
 public class FlowerSoapIntegrationTest extends AbstractSoapIntegrationTest {
+
+    Logger logger = LoggerFactory.getLogger(FlowerSoapIntegrationTest.class);
 
     @Test
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/flower/create_flower_table.sql"})
     public void createFlowerTest() {
+        logger.debug("[createFlowerTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -42,6 +47,7 @@ public class FlowerSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/flower/create_flower_table.sql",
             "/sql/flower/insert_flower_service.sql"})
     public void updateFlowerTest() {
+        logger.debug("[updateFlowerTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -76,6 +82,7 @@ public class FlowerSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/flower/create_flower_table.sql",
             "/sql/flower/insert_flower_service.sql"})
     public void deleteFlowerTest() {
+        logger.debug("[deleteFlowerTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -108,6 +115,7 @@ public class FlowerSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/flower/create_flower_table.sql",
             "/sql/flower/insert_flower_service.sql"})
     public void findAllFlowersTest() {
+        logger.debug("[findAllFlowersTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -148,6 +156,7 @@ public class FlowerSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/flower/create_flower_table.sql",
             "/sql/flower/insert_flower_service.sql"})
     public void findFlowerByIdTest() {
+        logger.debug("[findFlowerByIdTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest

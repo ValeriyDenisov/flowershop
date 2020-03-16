@@ -14,4 +14,10 @@ public class AddressSoapUnitTest extends AbstractSoapUnitTest<AddressClient> {
         }
         return client;
     }
+
+    //TODO delete
+    @Test
+    public void test() {
+        StringBuilder builder = new StringBuilder();
+    }
 }

@@ -17,4 +17,9 @@ public class User extends AbstractUser {
         super(login, password);
         this.role = Role.USER;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

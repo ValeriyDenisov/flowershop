@@ -5,6 +5,8 @@ import com.accenture.flowershop.be.entity.flower.Flower;
 import com.accenture.flowershop.test.integration.AbstractIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.util.CollectionUtils;
@@ -16,6 +18,8 @@ public class FlowerDAOIntegrationTest extends AbstractIntegrationTest {
     public static final String ERROR_FLOWER_FIND_BY_PRICE_NOT_FOUND = "Flower not found, expected found flowers: {0}";
     public static final String ERROR_FLOWER_FIND_BY_PRICE_WRONG_COUNT = "Flower found: {0}, expected found flowers: {1}";
 
+    Logger logger = LoggerFactory.getLogger(FlowerDAOIntegrationTest.class);
+
     @Autowired
     FlowerDAO flowerDAO;
 
@@ -24,6 +28,7 @@ public class FlowerDAOIntegrationTest extends AbstractIntegrationTest {
             "/sql/flower/create_flower_table.sql",
             "/sql/flower/insert_flower_dao.sql"})
     public void flowerFindByPriceTest() {
+        logger.debug("[flowerFindByPriceTest]");
         List<Flower> flowers;
 
         flowers = flowerDAO.findByParameters(null, null, null, null, null);

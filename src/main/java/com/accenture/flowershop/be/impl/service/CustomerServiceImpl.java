@@ -8,15 +8,15 @@ import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.AddressService;
 import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.entity.address.Address;
+import com.accenture.flowershop.be.entity.address.Address_;
 import com.accenture.flowershop.be.entity.customer.Customer;
-import com.accenture.flowershop.be.impl.utils.CommonUtils;
-import com.accenture.flowershop.be.impl.utils.Constants;
+import com.accenture.flowershop.be.entity.customer.Customer_;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -25,9 +25,10 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class CustomerServiceImpl extends AbstractServiceImpl implements CustomerService {
-    public static final String ERROR_CUSTOMER_EXISTS_BY_PHONE = "Customer with phone: {0} already exists!";
-    public static final String ERROR_CUSTOMER_EXISTS_BY_EMAIL = "Customer with email: {0} already exists!";
+public class CustomerServiceImpl extends AbstractServiceImpl<Customer, CustomerDAO> implements CustomerService {
+    public static final String CUSTOMER_CLASS_NAME = Customer.class.getSimpleName();
+
+    private final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     @Autowired
     CustomerDAO customerDAO;
@@ -35,132 +36,73 @@ public class CustomerServiceImpl extends AbstractServiceImpl implements Customer
     @Autowired
     AddressService addressService;
 
-    public Customer findCustomerById(Integer id) {
-        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
-
-        return customerDAO.findById(id);
+    @Override
+    public String getEntityName() {
+        return CUSTOMER_CLASS_NAME;
     }
 
+    @Override
+    public CustomerDAO getDAO() {
+        return customerDAO;
+    }
+
+    @Override
+    public Customer findCustomerById(Integer id) throws EntityFindingException {
+        return findEntityByUniqueField(Customer_.ID, id);
+    }
+
+    @Override
     public Integer insertCustomer(String name, String secondName, String fatherName, Integer addressId,
                                   String phone, Double balance, Short discount, String email) throws EntityCreatingException {
-        CommonUtils.assertValues(getCustomerFieldsValues(null, name, secondName, fatherName, addressId,
-                phone, balance, discount, email));
-
-        if (isCustomerExistsByPhone(phone)) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
-            throw new EntityCreatingException(ex);
-        }
-        if (isCustomerExistsByEmail(email)) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
-            throw new EntityCreatingException(ex);
-        }
-        Address address = addressService.findAddressById(addressId);
-        if (address == null) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
-            throw new EntityCreatingException(ex);
-        }
-
-
-        Customer customer = createCustomer(name, secondName, fatherName, address, phone, balance, discount, email);
-        validateEntity(customer, (ex -> {
-            throw new EntityCreatingException(ex);
-        }));
-
-        try {
-            customerDAO.insert(customer);
-        } catch (HibernateException e) {
-            throw new EntityCreatingException(e);
-        }
-        return customer.getId();
+        return insertEntity(getCustomerMandatoryFieldsValues(name, secondName, addressId, phone, balance, discount, email),
+                () -> {
+                    if (isEntityExistsByFiled(Customer_.EMAIL, email)) {
+                        throwExceptionIfEntityAlreadyExistsByUniqueField(Customer_.EMAIL, email, (ex) -> {
+                            throw new EntityCreatingException(ex);
+                        });
+                    }
+                    if (isEntityExistsByFiled(Customer_.PHONE, phone)) {
+                        throwExceptionIfEntityAlreadyExistsByUniqueField(Customer_.PHONE, phone, (ex) -> {
+                            throw new EntityCreatingException(ex);
+                        });
+                    }
+                    Address address = addressService.findAddressById(addressId);
+                    assertEntityNull(address, MessageFormat.format(ENTITY_FIND_BY_UNIQUE_FIELD_FAILURE, AddressServiceImpl.ADDRESS_CLASS_NAME,
+                            Address_.ID, addressId), (ex) -> {
+                        throw new EntityCreatingException(ex);
+                    });
+                    return createCustomer(name, secondName, fatherName, address, phone, balance, discount, email);
+                });
     }
 
+    @Override
     public void updateCustomer(Integer customerId, String name, String secondName, String fatherName, Integer addressId,
                                String phone, Double balance, Short discount, String email) throws EntityUpdatingException {
-        CommonUtils.assertNull(customerId, ERROR_ENTITY_ID_NULL);
-        Customer customer = findCustomerById(customerId);
-        if (customer == null) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
-            throw new EntityUpdatingException(ex);
-        }
-
-        if (addressId != null && !addressId.equals(customer.getAddress().getId())) {
-            Address address = addressService.findAddressById(addressId);
-            if (address == null) {
-                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Address.class, addressId));
-                throw new EntityUpdatingException(ex);
-            }
-            customer.setAddress(address);
-        }
-        if (balance != null) {
-            customer.setBalance(balance);
-        }
-        if (discount != null && !discount.equals(customer.getDiscount())) {
-            customer.setDiscount(discount);
-        }
-        if (StringUtils.isNotEmpty(fatherName) && !fatherName.equalsIgnoreCase(customer.getFatherName())) {
-            customer.setFatherName(fatherName);
-        }
-        if (StringUtils.isNotEmpty(name) && !name.equalsIgnoreCase(customer.getName())) {
-            customer.setName(name);
-        }
-        if (StringUtils.isNotEmpty(phone) && !phone.equalsIgnoreCase(customer.getPhone())) {
-            if (isCustomerExistsByPhone(phone)) {
-                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_PHONE, phone));
-                throw new EntityUpdatingException(ex);
-            }
-            customer.setPhone(phone);
-        }
-        if (StringUtils.isNotEmpty(secondName) && !secondName.equalsIgnoreCase(customer.getSecondName())) {
-            customer.setSecondName(secondName);
-        }
-        if (StringUtils.isNotEmpty(email) && !email.equalsIgnoreCase(customer.getEmail())) {
-            if (isCustomerExistsByEmail(email)) {
-                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_CUSTOMER_EXISTS_BY_EMAIL, email));
-                throw new EntityUpdatingException(ex);
-            }
-            customer.setEmail(email);
-        }
-        validateEntity(customer, (ex) -> {
-            throw new EntityUpdatingException(ex);
-        });
-
-        try {
-            customerDAO.update(customer);
-        } catch (HibernateException e) {
-            throw new EntityUpdatingException(e);
-        }
+        updateEntityByUniqueField(Customer_.ID, customerId, (customer) -> updateCustomerField(customer, name, secondName, fatherName, addressId, phone, balance, discount, email));
     }
 
+    @Override
+    public void updateCustomer(Customer customer, String name, String secondName, String fatherName, Integer addressId, String phone, Double balance, Short discount, String email) throws EntityUpdatingException {
+        updateEntityByUniqueField(customer, (customerToUpdate) -> updateCustomerField(customerToUpdate, name, secondName, fatherName, addressId, phone, balance, discount, email));
+    }
+
+    @Override
     public void deleteCustomer(Integer customerId) throws EntityDeletingException {
-        CommonUtils.assertNull(customerId, ERROR_ENTITY_ID_NULL);
-
-        Customer customer = findCustomerById(customerId);
-        if (customer == null) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, customerId));
-            throw new EntityUpdatingException(ex);
-        }
-
-        try {
-            customerDAO.delete(customer);
-        } catch (HibernateException e) {
-            throw new EntityDeletingException(e);
-        }
+        deleteEntityByUniqueField(Customer_.ID, customerId);
     }
 
-    public Customer findCustomerByPhone(String phone) {
-        CommonUtils.assertEmpty(phone, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_PHONE));
-
-        return customerDAO.findByUniqueElement(phone, Customer.PHONE);
+    @Override
+    public Customer findCustomerByPhone(String phone) throws EntityFindingException {
+        return findEntityByUniqueField(Customer_.PHONE, phone);
     }
 
+    @Override
     public Customer findCustomerByEmail(String email) {
-        CommonUtils.assertEmpty(email, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.CUSTOMER_EMAIL));
-
-        return customerDAO.findByUniqueElement(email, Customer.EMAIL);
+        return findEntityByUniqueField(Customer_.EMAIL, email);
     }
 
     public List<Customer> findAllCustomers() {
-        return customerDAO.findAll();
+        return findAllEntities();
     }
 
     private Customer createCustomer(String name, String secondName, String fatherName,
@@ -168,33 +110,67 @@ public class CustomerServiceImpl extends AbstractServiceImpl implements Customer
         return new Customer.Builder(name, secondName, address, phone, balance, discount, email).fatherName(fatherName).build();
     }
 
-    private boolean isCustomerExistsByPhone(String phone) {
-        return findCustomerByPhone(phone) != null;
-    }
-
-    private boolean isCustomerExistsByEmail(String email) {
-        return findCustomerByEmail(email) != null;
-    }
-
-    private Map<String, Object> getCustomerFieldsValues(Integer id, String name, String secondName,
-                                                        String fatherName, Integer addressId, String phone,
-                                                        Double balance, Short discount, String email) {
+    private Map<String, Object> getCustomerMandatoryFieldsValues(String name, String secondName,
+                                                                 Integer addressId, String phone,
+                                                                 Double balance, Short discount, String email) {
         Map<String, Object> fieldsValues = new HashMap<>();
 
-        if (id != null) {
-            fieldsValues.put(Constants.ENTITY_ID, id);
-        }
-        fieldsValues.put(Constants.CUSTOMER_NAME, name);
-        fieldsValues.put(Constants.CUSTOMER_SECOND_NAME, secondName);
-        if (StringUtils.isNotEmpty(fatherName)) {
-            fieldsValues.put(Constants.CUSTOMER_FATHER_NAME, fatherName);
-        }
-        fieldsValues.put(Constants.CUSTOMER_ADDRESS, addressId);
-        fieldsValues.put(Constants.CUSTOMER_PHONE, phone);
-        fieldsValues.put(Constants.CUSTOMER_BALANCE, balance);
-        fieldsValues.put(Constants.CUSTOMER_DISCOUNT, discount);
-        fieldsValues.put(Constants.CUSTOMER_EMAIL, email);
+        fieldsValues.put(Customer_.NAME, name);
+        fieldsValues.put(Customer_.SECOND_NAME, secondName);
+        fieldsValues.put(Customer_.ADDRESS, addressId);
+        fieldsValues.put(Customer_.PHONE, phone);
+        fieldsValues.put(Customer_.BALANCE, balance);
+        fieldsValues.put(Customer_.DISCOUNT, discount);
+        fieldsValues.put(Customer_.EMAIL, email);
 
         return fieldsValues;
+    }
+
+    private Map<String, Object> getCustomerMandatoryFieldsValues(Integer id, String name, String secondName,
+                                                                 Integer addressId, String phone,
+                                                                 Double balance, Short discount, String email) {
+        Map<String, Object> fieldsValues = getCustomerMandatoryFieldsValues(name, secondName, addressId, phone, balance, discount, email);
+        fieldsValues.put(Customer_.ID, id);
+        return fieldsValues;
+    }
+
+    private void updateCustomerField(Customer customer, String name, String secondName, String fatherName, Integer addressId,
+                                     String phone, Double balance, Short discount, String email) {
+        if (StringUtils.isNotEmpty(name)) {
+            customer.setName(name);
+        }
+        if (StringUtils.isNotEmpty(secondName)) {
+            customer.setSecondName(secondName);
+        }
+        customer.setFatherName(fatherName);
+        if (addressId != null) {
+            Address address = addressService.findAddressById(addressId);
+            assertEntityNull(address, MessageFormat.format(ENTITY_FIND_BY_UNIQUE_FIELD_FAILURE, AddressServiceImpl.ADDRESS_CLASS_NAME,
+                    Address_.ID, addressId), (ex) -> {
+                throw new EntityUpdatingException(ex);
+            });
+        }
+        if (StringUtils.isNotEmpty(phone) && !phone.equalsIgnoreCase(customer.getEmail())) {
+            if (isEntityExistsByFiled(Customer_.PHONE, phone)) {
+                throwExceptionIfEntityAlreadyExistsByUniqueField(Customer_.PHONE, phone, (ex) -> {
+                    throw new EntityUpdatingException(ex);
+                });
+            }
+            customer.setPhone(phone);
+        }
+        if (balance != null) {
+            customer.setBalance(balance);
+        }
+        if (discount != null) {
+            customer.setDiscount(discount);
+        }
+        if (StringUtils.isNotEmpty(email)) {
+            if (isEntityExistsByFiled(Customer_.EMAIL, email)) {
+                throwExceptionIfEntityAlreadyExistsByUniqueField(Customer_.EMAIL, email, (ex) -> {
+                    throw new EntityUpdatingException(ex);
+                });
+            }
+            customer.setEmail(email);
+        }
     }
 }

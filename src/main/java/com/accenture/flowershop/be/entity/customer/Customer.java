@@ -125,14 +125,14 @@ public class Customer extends AbstractEntity {
         builder
                 .append("Customer{")
                 .append("id=").append(id != null ? id : "")
-                .append(", name= ").append(name)
-                .append(", secondName= ").append(secondName)
-                .append(", fatherName= ").append(fatherName != null ? fatherName : "")
-                .append(", address= ").append(address.toString())
-                .append(", phone= ").append(phone)
-                .append(", balance= ").append(balance)
-                .append(", discount= ").append(discount)
-                .append(", email= ").append(email)
+                .append(", name=").append(name)
+                .append(", secondName=").append(secondName)
+                .append(", fatherName=").append(fatherName != null ? fatherName : "")
+                .append(", address=").append(address.toString())
+                .append(", phone=").append(phone)
+                .append(", balance=").append(balance)
+                .append(", discount=").append(discount)
+                .append(", email=").append(email)
                 .append("}");
         return builder.toString();
     }

@@ -28,6 +28,16 @@ CREATE TABLE IF NOT EXISTS customers
   email varchar (255) NOT NULL unique
 );
 
+CREATE TABLE IF NOT EXISTS orders
+(
+    id int(10) PRIMARY KEY AUTO_INCREMENT,
+    price double NOT NULL,
+    open_date date NOT NULL,
+    close_date date,
+    is_active bit NOT NULL,
+    customer_id int(10) NOT NULL
+);
+
 create TABLE IF NOT EXISTS users
 (
     id int(10) PRIMARY KEY AUTO_INCREMENT,

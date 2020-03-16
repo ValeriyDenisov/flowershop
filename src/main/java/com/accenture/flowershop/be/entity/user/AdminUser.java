@@ -19,4 +19,8 @@ public class AdminUser extends AbstractUser {
         this.role = Role.ADMIN;
     }
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

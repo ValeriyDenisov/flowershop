@@ -57,9 +57,9 @@ public class Flower extends AbstractEntity {
         builder
                 .append("Flower{")
                 .append("id=").append(id != null ? id : "")
-                .append(", name= ").append(name)
-                .append(", price= ").append(price)
-                .append(", quantityInStock= ").append(quantityInStock)
+                .append(", name=").append(name)
+                .append(", price=").append(price)
+                .append(", quantityInStock=").append(quantityInStock)
                 .append("}");
         return builder.toString();
     }

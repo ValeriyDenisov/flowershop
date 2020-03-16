@@ -10,6 +10,7 @@
     <version>0.01</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-version>5.2.0.RELEASE</spring-version>
         <hibernate-version>5.4.10.Final</hibernate-version>
         <junit-version>4.13</junit-version>
@@ -26,22 +27,41 @@
         <javax.el-api-version>3.0.0</javax.el-api-version>
         <spring-ws-version>3.0.8.RELEASE</spring-ws-version>
         <jaxb2-maven-plugin-version>2.2</jaxb2-maven-plugin-version>
-        <jdbc.driverClassName>com.mysql.cj.jdbc.Driver</jdbc.driverClassName>
-        <jdbc.url>jdbc:mysql://localhost:3306/flowershop?serverTimezone=Europe/Minsk</jdbc.url>
-        <jdbc.username>root</jdbc.username>
-        <jdbc.password>root</jdbc.password>
     </properties>
 
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java/jpametamodel</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
                     <debug>true</debug>
                     <debuglevel>lines,vars,source</debuglevel>
+                    <compilerArguments>
+                        <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                    </compilerArguments>
                 </configuration>
             </plugin>
 
@@ -57,7 +77,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>src/main/resources/properties/db.properties</file>
+                                <file>${basedir}/src/main/resources/properties/db.properties</file>
                             </files>
                         </configuration>
                     </execution>
@@ -111,6 +131,34 @@
             <artifactId>spring-ws-core</artifactId>
             <version>${spring-ws-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.4.12.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
 
         <dependency>
             <groupId>wsdl4j</groupId>

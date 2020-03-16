@@ -10,7 +10,9 @@
 
         <attributes>
             <id name="id">
-                <generated-value strategy="AUTO"/>
+                <generated-value strategy="IDENTITY"/>
+                <!--<generated-value strategy="TABLE" generator="test_sequence"/>
+                <sequence-generator name="test_sequence" sequence-name="test_sequence" allocation-size="1"/>-->
             </id>
         </attributes>
     </mapped-superclass>

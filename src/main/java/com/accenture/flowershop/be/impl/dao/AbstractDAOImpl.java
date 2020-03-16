@@ -37,6 +37,11 @@ public abstract class AbstractDAOImpl<T extends AbstractEntity> implements Abstr
         entityManager.merge(object);
     }
 
+    @Override
+    public <V extends AbstractEntity> boolean isPersist(V object) {
+        return entityManager.contains(object);
+    }
+
     public T findByUniqueElement(Object value, String elementName) {
         String query = MessageFormat.format(SELECT_BY_UNIQUE_ELEMENT_QUERY, getType().getSimpleName(), elementName);
         TypedQuery<T> selectQuery = entityManager.createQuery(query, getType());

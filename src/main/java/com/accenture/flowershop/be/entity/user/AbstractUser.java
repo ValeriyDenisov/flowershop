@@ -67,9 +67,9 @@ public abstract class AbstractUser extends AbstractEntity {
         builder
                 .append("User{")
                 .append("id=").append(id != null ? id : "")
-                .append(", login= ").append(login)
-                .append(", password= ").append(password)
-                .append(", role= ").append(role)
+                .append(", login=").append(login)
+                .append(", password=").append(password)
+                .append(", role=").append(role)
                 .append("}");
         return builder.toString();
     }

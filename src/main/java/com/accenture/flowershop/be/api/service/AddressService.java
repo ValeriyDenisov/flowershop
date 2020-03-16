@@ -2,6 +2,7 @@ package com.accenture.flowershop.be.api.service;
 
 import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
 import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
+import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.entity.address.Address;
 
@@ -14,7 +15,7 @@ public interface AddressService {
 
     void updateAddress(Integer id, String street, String city, Integer code, Integer building) throws EntityUpdatingException;
 
-    Address findAddressById(Integer id);
+    Address findAddressById(Integer id) throws EntityFindingException;
 
     List<Address> findAllAddresses();
 }

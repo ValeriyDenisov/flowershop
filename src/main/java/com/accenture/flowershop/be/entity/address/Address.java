@@ -58,7 +58,7 @@ public class Address extends AbstractEntity {
         this.code = code;
     }
 
-    public int getBuilding() {
+    public Integer getBuilding() {
         return building;
     }
 
@@ -72,10 +72,10 @@ public class Address extends AbstractEntity {
         builder
                 .append("Address{")
                 .append("id=").append(id != null ? id : "")
-                .append(", street= ").append(street)
-                .append(", city= ").append(city)
-                .append(", code= ").append(code)
-                .append(", building= ").append(building)
+                .append(", street=").append(street)
+                .append(", city=").append(city)
+                .append(", code=").append(code)
+                .append(", building=").append(building)
                 .append("}");
         return builder.toString();
     }
@@ -114,5 +114,10 @@ public class Address extends AbstractEntity {
 
     public Address() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 }

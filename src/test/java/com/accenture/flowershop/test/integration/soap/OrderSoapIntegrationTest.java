@@ -5,17 +5,23 @@ import com.accenture.flowershop.be.entity.order.Order;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 public class OrderSoapIntegrationTest extends AbstractSoapIntegrationTest {
+
+    Logger logger = LoggerFactory.getLogger(OrderSoapIntegrationTest.class);
+
     @Test
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/order/create_order_table.sql",
             "/sql/address/insert_address.sql",
             "/sql/customer/insert_customer.sql"})
     public void createOrderTest() {
+        logger.debug("[createOrderTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
 
@@ -51,6 +57,7 @@ public class OrderSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/customer/insert_customer.sql",
             "/sql/order/insert_order.sql"})
     public void findOrderByIdTest() {
+        logger.debug("[findOrderByIdTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -106,6 +113,7 @@ public class OrderSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/customer/insert_customer.sql",
             "/sql/order/insert_order.sql"})
     public void deleteOrderByIdTest() {
+        logger.debug("[deleteOrderByIdTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -140,6 +148,7 @@ public class OrderSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/customer/insert_customer.sql",
             "/sql/order/insert_order.sql"})
     public void updateOrderByIdTest() {
+        logger.debug("[updateOrderByIdTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -176,6 +185,7 @@ public class OrderSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/customer/insert_customer.sql",
             "/sql/order/insert_order.sql"})
     public void findAllOrdersTest() {
+        logger.debug("[findAllOrdersTest]");
         StringBuilder xmlRequest = new StringBuilder();
         xmlRequest
                 .append("<findAllOrdersRequest xmlns=")

@@ -6,12 +6,16 @@ import com.accenture.flowershop.test.integration.AbstractIntegrationTest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 public class OrderDAOIntegrationTest extends AbstractIntegrationTest {
+
+    Logger logger = LoggerFactory.getLogger(OrderDAOIntegrationTest.class);
 
     @Autowired
     OrderDAO orderDAO;
@@ -21,7 +25,8 @@ public class OrderDAOIntegrationTest extends AbstractIntegrationTest {
             "/sql/order/create_order_table.sql",
             "/sql/order/insert_order_dao.sql"})
     public void findOrdersByCustomerEmail() {
-        List<Order> orders = orderDAO.findByCustomerEmail("email_2");
+        logger.debug("[findOrdersByCustomerEmail]");
+        List<Order> orders = orderDAO.findByCustomerEmail("login@222");
         Assert.assertFalse(CollectionUtils.isEmpty(orders));
         Assert.assertEquals(3, orders.size());
     }

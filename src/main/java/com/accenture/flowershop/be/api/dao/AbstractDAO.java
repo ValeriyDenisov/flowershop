@@ -16,5 +16,7 @@ public interface AbstractDAO<T extends AbstractEntity> {
 
     List<T> findAll();
 
+    <V extends AbstractEntity> boolean isPersist(V object);
+
     T findByUniqueElement(Object value, String elementName);
 }

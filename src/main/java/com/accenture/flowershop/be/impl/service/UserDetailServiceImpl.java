@@ -14,11 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserDetailServiceImpl extends AbstractServiceImpl implements UserDetailsService {
+public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
     UserService userService;
 
+    @Override
     public UserDetails loadUserByUsername(String login) {
         AbstractUser user = userService.findUserByLogin(login);
         Set<GrantedAuthority> roles = new HashSet<>();

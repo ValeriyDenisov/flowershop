@@ -6,11 +6,16 @@ import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
 import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.FlowerService;
+import com.accenture.flowershop.be.entity.customer.Customer;
+import com.accenture.flowershop.be.entity.customer.Customer_;
 import com.accenture.flowershop.be.entity.flower.Flower;
+import com.accenture.flowershop.be.entity.flower.Flower_;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
 import com.accenture.flowershop.be.impl.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,97 +27,60 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class FlowerServiceImpl extends AbstractServiceImpl implements FlowerService {
+public class FlowerServiceImpl extends AbstractServiceImpl<Flower, FlowerDAO> implements FlowerService {
+    public static final String FLOWER_CLASS_NAME = Flower.class.getSimpleName();
     public static final String ERROR_FLOWER_EXISTS_BY_NAME = "Flower with name: {0} already exists!";
+
+    private final Logger logger = LoggerFactory.getLogger(FlowerServiceImpl.class);
 
     @Autowired
     FlowerDAO flowerDAO;
 
+    @Override
+    public String getEntityName() {
+        return FLOWER_CLASS_NAME;
+    }
+
+    @Override
+    public FlowerDAO getDAO() {
+        return flowerDAO;
+    }
+
+    @Override
     public Flower findFlowerByName(String name) {
-        CommonUtils.assertEmpty(name, MessageFormat.format(Constants.ERROR_ENTITY_FIELD_EMPTY, Constants.FLOWER_NAME));
-
-        return flowerDAO.findByUniqueElement(name, Flower.NAME);
+        return findEntityByUniqueField(Flower.NAME, name);
     }
 
+    @Override
     public Flower findFlowerById(Integer id) {
-        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
-
-        return flowerDAO.findById(id);
+        return findEntityByUniqueField(Flower_.ID, id);
     }
 
+    @Override
     public List<Flower> findAllFlowers() {
-        return flowerDAO.findAll();
+        return findAllEntities();
     }
 
+    @Override
     public Integer insertFlower(String name, Double price, Integer quantityInStock) throws EntityCreatingException {
-        CommonUtils.assertValues(getFlowersFieldsValues(null, name, price, quantityInStock));
-
-        if (isFlowerExistByName(name)) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_FLOWER_EXISTS_BY_NAME, name));
-            throw new EntityCreatingException(ex);
-        }
-
-        Flower flower = createFlower(name, price, quantityInStock);
-        validateEntity(flower, (ex) -> {
-            throw new EntityCreatingException(ex);
-        });
-
-        try {
-            flowerDAO.insert(flower);
-        } catch (HibernateException e) {
-            throw new EntityCreatingException(e);
-        }
-        return flower.getId();
-    }
-
-    public void updateFlower(Integer flowerId, String name, Double price, Integer quantityInStock) throws EntityUpdatingException {
-        CommonUtils.assertNull(flowerId, ERROR_ENTITY_ID_NULL);
-
-        Flower flower = findFlowerById(flowerId);
-        if (flower == null) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Flower.class, flowerId));
-            throw new EntityUpdatingException(ex);
-        }
-
-
-        if (StringUtils.isNotEmpty(name) && !name.equalsIgnoreCase(flower.getName())) {
-            if (isFlowerExistByName(name)) {
-                EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_FLOWER_EXISTS_BY_NAME, name));
-                throw new EntityUpdatingException(ex);
+        return insertEntity(getFlowersMandatoryFieldsValues(name, price, quantityInStock), () -> {
+            if (isEntityExistsByFiled(Flower_.NAME, name)) {
+                throwExceptionIfEntityAlreadyExistsByUniqueField(Flower_.NAME, name, (ex) -> {
+                    throw new EntityCreatingException(ex);
+                });
             }
-            flower.setName(name);
-        }
-        if (price != null && price != 0.0) {
-            flower.setPrice(price);
-        }
-        if (quantityInStock != null && !quantityInStock.equals(flower.getQuantityInStock())) {
-            flower.setQuantityInStock(quantityInStock);
-        }
-        validateEntity(flower, (ex -> {
-            throw new EntityUpdatingException(ex);
-        }));
-
-        try {
-            flowerDAO.update(flower);
-        } catch (HibernateException e) {
-            throw new EntityUpdatingException(e);
-        }
+            return createFlower(name, price, quantityInStock);
+        });
     }
 
+    @Override
+    public void updateFlower(Integer flowerId, String name, Double price, Integer quantityInStock) throws EntityUpdatingException {
+        updateEntityByUniqueField(Flower_.ID, flowerId, (flower) -> updateFlowerFields(flower, name, price, quantityInStock));
+    }
+
+    @Override
     public void deleteFlower(Integer flowerId) throws EntityDeletingException {
-        CommonUtils.assertNull(flowerId, ERROR_ENTITY_ID_NULL);
-
-        Flower flower = findFlowerById(flowerId);
-        if (flower == null) {
-            EntityFindingException ex = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Flower.class, flowerId));
-            throw new EntityDeletingException(ex);
-        }
-
-        try {
-            flowerDAO.delete(flower);
-        } catch (HibernateException e) {
-            throw new EntityDeletingException(e);
-        }
+        deleteEntityByUniqueField(Customer_.ID, flowerId);
     }
 
     @Override
@@ -120,24 +88,41 @@ public class FlowerServiceImpl extends AbstractServiceImpl implements FlowerServ
         return flowerDAO.findByParameters(name, priceFrom, priceTo, limit, offset);
     }
 
-    private boolean isFlowerExistByName(String name) {
-        return findFlowerByName(name) != null;
-    }
 
     private Flower createFlower(String name, Double price, Integer quantityInStock) {
         return new Flower.Builder(name, price, quantityInStock).build();
     }
 
-    private Map<String, Object> getFlowersFieldsValues(Integer id, String name, Double price, Integer quantityInStock) {
+    private Map<String, Object> getFlowersMandatoryFieldsValues(String name, Double price, Integer quantityInStock) {
         Map<String, Object> fieldsValues = new HashMap<>();
 
-        if (id != null) {
-            fieldsValues.put(Constants.ENTITY_ID, id);
-        }
-        fieldsValues.put(Constants.FLOWER_NAME, name);
-        fieldsValues.put(Constants.FLOWER_PRICE, price);
-        fieldsValues.put(Constants.FLOWER_QUANTITY_IN_STOCK, quantityInStock);
+        fieldsValues.put(Flower_.ID, name);
+        fieldsValues.put(Flower_.PRICE, price);
+        fieldsValues.put(Flower_.QUANTITY_IN_STOCK, quantityInStock);
 
         return fieldsValues;
+    }
+
+    private Map<String, Object> getFlowersMandatoryFieldsValues(Integer id, String name, Double price, Integer quantityInStock) {
+        Map<String, Object> fieldsValues = getFlowersMandatoryFieldsValues(name, price, quantityInStock);
+        fieldsValues.put(Flower_.ID, id);
+        return fieldsValues;
+    }
+
+    private void updateFlowerFields(Flower flower, String name, Double price, Integer quantityInStock) {
+        if (StringUtils.isNotEmpty(name) && !name.equalsIgnoreCase(flower.getName())) {
+            if (isEntityExistsByFiled(Flower_.NAME, name)) {
+                throwExceptionIfEntityAlreadyExistsByUniqueField(Flower_.NAME, name, (ex) -> {
+                    throw new EntityUpdatingException(ex);
+                });
+            }
+            flower.setName(name);
+        }
+        if (price != null && price != 0) {
+            flower.setPrice(price);
+        }
+        if (quantityInStock != null) {
+            flower.setQuantityInStock(quantityInStock);
+        }
     }
 }

@@ -7,128 +7,97 @@ import com.accenture.flowershop.be.api.exceptions.EntityFindingException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.api.service.AddressService;
 import com.accenture.flowershop.be.entity.address.Address;
-import com.accenture.flowershop.be.entity.customer.Customer;
-import com.accenture.flowershop.be.impl.utils.CommonUtils;
-import com.accenture.flowershop.be.impl.utils.Constants;
+import com.accenture.flowershop.be.entity.address.Address_;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Transactional
-public class AddressServiceImpl extends AbstractServiceImpl implements AddressService {
+public class AddressServiceImpl extends AbstractServiceImpl<Address, AddressDAO> implements AddressService {
+    public static final String ADDRESS_CLASS_NAME = Address.class.getSimpleName();
+
+    private final Logger logger = LoggerFactory.getLogger(AddressServiceImpl.class);
 
     @Autowired
     AddressDAO addressDAO;
 
+    @Override
+    public String getEntityName() {
+        return ADDRESS_CLASS_NAME;
+    }
+
+    @Override
+    public AddressDAO getDAO() {
+        return addressDAO;
+    }
+
+    @Override
     public Integer insertAddress(String street, String city, Integer code, Integer building) throws EntityCreatingException {
-        try {
-            CommonUtils.assertValues(getAddressFieldsValues(null, street, city, code, building));
-        } catch (IllegalArgumentException e) {
-            throw new EntityCreatingException(e);
-        }
-
-
-        Address address = createAddress(street, city, code, building);
-        validateEntity(address, (ex) -> {
-            throw new EntityCreatingException(ex);
-        });
-
-        try {
-            addressDAO.insert(address);
-        } catch (HibernateException e) {
-            throw new EntityCreatingException(e);
-        }
-
-        return address.getId();
+        return insertEntity(getAddressMandatoryFieldsValues(street, city, code, building), () -> createAddress(street, city, code, building));
     }
 
+    @Override
     public void deleteAddress(Integer id) throws EntityDeletingException {
-        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
-
-        Address address = findAddressById(id);
-        if (address == null) {
-            EntityFindingException e = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, id));
-            throw new EntityDeletingException(e);
-        }
-
-        try {
-            addressDAO.delete(address);
-        } catch (HibernateException e) {
-            throw new EntityDeletingException(e);
-        }
+        deleteEntityByUniqueField(Address_.ID, id);
     }
 
+    @Override
     public void updateAddress(Integer id, String street, String city, Integer code, Integer building) throws EntityUpdatingException {
-        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
-
-        Address address = findAddressById(id);
-        if (address == null) {
-            EntityFindingException e = new EntityFindingException(MessageFormat.format(ERROR_ENTITY_BY_ID_NOT_FOUND, Customer.class, id));
-            throw new EntityUpdatingException(e);
-        }
-
-        if (StringUtils.isNotEmpty(street) && !street.equalsIgnoreCase(address.getStreet())) {
-            address.setStreet(street);
-        }
-        if (code != null && code.equals(address.getCode())) {
-            address.setCode(code);
-        }
-        if (StringUtils.isNotEmpty(city) && !city.equalsIgnoreCase(address.getCity())) {
-            address.setCity(city);
-        }
-        if (building != null && !building.equals(address.getBuilding())) {
-            address.setBuilding(building);
-        }
-        validateEntity(address, (ex) -> {
-            throw new EntityUpdatingException(ex);
-        });
-
-        try {
-            addressDAO.update(address);
-        } catch (HibernateException e) {
-            throw new EntityUpdatingException(e);
-        }
+        updateEntityByUniqueField(Address_.ID, id, (address) -> updateAddressFields(address, street, city, code, building));
     }
 
-    public Address findAddressById(Integer id) {
-        CommonUtils.assertNull(id, ERROR_ENTITY_ID_NULL);
-
-        return addressDAO.findById(id);
+    @Override
+    public Address findAddressById(Integer id) throws EntityFindingException {
+        return findEntityByUniqueField(Address_.ID, id);
     }
 
+    @Override
     public List<Address> findAllAddresses() {
-        return addressDAO.findAll();
+        return findAllEntities();
     }
 
     protected Address createAddress(String street, String city, Integer code, Integer building) {
         return new Address.Builder(street, city, code, building).build();
     }
 
-    private boolean isAddressExist(Integer id) {
-        Address address = addressDAO.findById(id);
-        return address != null;
-    }
+    private Map<String, Object> getAddressMandatoryFieldsValues(String street,
+                                                                String city, Integer code, Integer building) {
+        Map<String, Object> fieldsValues = new HashMap<>();
 
-    private Map<String, Object> getAddressFieldsValues(Integer id, String street,
-                                                       String city, Integer code, Integer building) {
-        Map<String, Object> fieldsValues = new HashMap<String, Object>();
-
-        if (id != null) {
-            fieldsValues.put(Constants.ENTITY_ID, id);
-        }
-        fieldsValues.put(Constants.ADDRESS_STREET, street);
-        fieldsValues.put(Constants.ADDRESS_CITY, city);
-        fieldsValues.put(Constants.ADDRESS_CODE, code);
-        fieldsValues.put(Constants.ADDRESS_BUILDING, building);
+        fieldsValues.put(Address_.STREET, street);
+        fieldsValues.put(Address_.CITY, city);
+        fieldsValues.put(Address_.CODE, code);
+        fieldsValues.put(Address_.BUILDING, building);
 
         return fieldsValues;
+    }
+
+    private Map<String, Object> getAddressMandatoryFieldsValues(Integer id, String street, String city, Integer code, Integer building) {
+        Map<String, Object> fieldValues = getAddressMandatoryFieldsValues(street, city, code, building);
+        fieldValues.put(Address_.ID, id);
+        return fieldValues;
+    }
+
+    private void updateAddressFields(Address address, String street, String city, Integer code, Integer building) {
+        if (StringUtils.isNotEmpty(street)) {
+            address.setStreet(street);
+        }
+        if (StringUtils.isNotEmpty(city)) {
+            address.setCity(city);
+        }
+        if (code != null && code != 0) {
+            address.setCode(code);
+        }
+        if (building != null && building != 0) {
+            address.setBuilding(building);
+        }
     }
 }

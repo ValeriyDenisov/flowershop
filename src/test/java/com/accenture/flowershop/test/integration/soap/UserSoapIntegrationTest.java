@@ -1,16 +1,21 @@
 package com.accenture.flowershop.test.integration.soap;
 
-import com.accenture.flowershop.be.entity.flower.Flower;
 import com.accenture.flowershop.be.entity.user.User;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.jdbc.Sql;
 
 public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
+
+    Logger logger = LoggerFactory.getLogger(UserSoapIntegrationTest.class);
+
     @Test
     @Sql({"/sql/delete_data_tables.sql",
             "/sql/user/create_user_table.sql"})
     public void createUserTest() {
+        logger.debug("[createUserTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -42,6 +47,7 @@ public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/user/create_user_table.sql",
             "/sql/user/insert_user.sql"})
     public void updateUserTest() {
+        logger.debug("[updateUserTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -76,6 +82,7 @@ public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/user/create_user_table.sql",
             "/sql/user/insert_user.sql"})
     public void deleteUserTest() {
+        logger.debug("[deleteUserTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -108,6 +115,7 @@ public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/user/create_user_table.sql",
             "/sql/user/insert_user.sql"})
     public void findAllUsersTest() {
+        logger.debug("[findAllUsersTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -128,13 +136,13 @@ public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
                 .append("\n\t</response>")
                 .append("\n\t<users>")
                 .append("\n\t\t<id>1</id>")
-                .append("\n\t\t<login>name_1</login>")
+                .append("\n\t\t<login>name_1@1</login>")
                 .append("\n\t\t<password>password_1</password>")
                 .append("\n\t\t<role>USER</role>")
                 .append("\n\t</users>")
                 .append("\n\t<users>")
                 .append("\n\t\t<id>2</id>")
-                .append("\n\t\t<login>name_2</login>")
+                .append("\n\t\t<login>name_2@2</login>")
                 .append("\n\t\t<password>password_2</password>")
                 .append("\n\t\t<role>USER</role>")
                 .append("\n\t</users>")
@@ -148,6 +156,7 @@ public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
             "/sql/user/create_user_table.sql",
             "/sql/user/insert_user.sql"})
     public void findUserByIdTest() {
+        logger.debug("[findUserByIdTest]");
         StringBuilder xmlRequest = new StringBuilder();
         StringBuilder xmlResponse = new StringBuilder();
         xmlRequest
@@ -169,7 +178,7 @@ public class UserSoapIntegrationTest extends AbstractSoapIntegrationTest {
                 .append("\n\t</response>")
                 .append("\n\t<user>")
                 .append("\n\t\t<id>1</id>")
-                .append("\n\t\t<login>name_1</login>")
+                .append("\n\t\t<login>name_1@1</login>")
                 .append("\n\t\t<password>password_1</password>")
                 .append("\n\t\t<role>USER</role>")
                 .append("\n\t</user>")

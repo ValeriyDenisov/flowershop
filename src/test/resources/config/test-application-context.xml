@@ -11,7 +11,16 @@
 
     <context:annotation-config/>
 
-    <context:property-placeholder location="classpath*:properties/test_db.properties"/>
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:properties/test_db.properties</value>
+                <value>classpath:properties/db.properties</value>
+            </list>
+        </property>
+    </bean>
+
 
     <context:component-scan base-package="com.accenture.flowershop.be"/>
 
@@ -48,8 +57,9 @@
         </property>
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.hbm2ddl.auto" value="${test.hibernate.hbm2ddl.auto.test}"/>
+                <entry key="hibernate.hbm2ddl.auto" value="${test.hibernate.hbm2ddl.auto}"/>
                 <entry key="hibernate.dialect" value="${test.hibernate.dialect}"/>
+                <entry key="hibernate.id.new_generator_mappings" value="true"/>
             </map>
         </property>
     </bean>

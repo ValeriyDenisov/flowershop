@@ -98,11 +98,11 @@ public class Order extends AbstractEntity {
         builder
                 .append("Order{")
                 .append("id=").append(id != null ? id : "")
-                .append(", customer= ").append(customer.toString())
-                .append(", price= ").append(price)
-                .append(", isActive= ").append(active)
-                .append(", openDate= ").append(openDate.getTime().toString())
-                .append(", closeDate= ").append(closeDate != null ? closeDate.getTime().toString() : "")
+                .append(", customer=").append(customer.toString())
+                .append(", price=").append(price)
+                .append(", isActive=").append(active)
+                .append(", openDate=").append(openDate.getTime().toString())
+                .append(", closeDate=").append(closeDate != null ? closeDate.getTime().toString() : "")
                 .append("}");
         return builder.toString();
     }
