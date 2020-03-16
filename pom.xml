@@ -98,6 +98,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <arguments>
+                        <argument>-XtoString</argument>
+                    </arguments>
                     <sources>
                         <source>
                             ${basedir}/src/main/resources/xsd/flowershop.xsd
@@ -106,6 +109,13 @@
                     <packageName>com.accenture.flowershop.fe.endpoints.xjc</packageName>
                     <clearOutputDir>false</clearOutputDir>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>0.11.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -211,6 +221,19 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics</artifactId>
+            <version>0.11.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
             <version>${spring-version}</version>
         </dependency>
 
