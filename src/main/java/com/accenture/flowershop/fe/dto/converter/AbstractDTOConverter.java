@@ -2,6 +2,8 @@ package com.accenture.flowershop.fe.dto.converter;
 
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
 import com.accenture.flowershop.fe.dto.entity.AbstractDTO;
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -12,7 +14,12 @@ public abstract class AbstractDTOConverter<D extends AbstractDTO, E extends Abst
     public static final String ERROR_DTO_NULL = "Объект DTO пуст";
     public static final String ERROR_ENTITY_NULL = "Entity {0} is null";
 
-    public abstract D convert(E entity);
+    @Autowired
+    DozerBeanMapper dozerMapper;
+
+    public D convert(E entity) {
+        return dozerMapper.map(entity, getDTOType());
+    }
 
     public List<D> convertAll(List<E> entities) {
         if (CollectionUtils.isEmpty(entities)) {
@@ -24,4 +31,6 @@ public abstract class AbstractDTOConverter<D extends AbstractDTO, E extends Abst
         }
         return dto;
     }
+
+    abstract public Class<D> getDTOType();
 }

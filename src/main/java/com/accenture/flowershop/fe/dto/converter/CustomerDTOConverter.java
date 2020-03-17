@@ -12,23 +12,8 @@ import java.text.MessageFormat;
 @Component
 public class CustomerDTOConverter extends AbstractDTOConverter<CustomerDTO, Customer> {
 
-    @Autowired
-    AddressDTOConverter addressDTOConverter;
-
     @Override
-    public CustomerDTO convert(Customer entity) {
-        CommonUtils.assertNull(entity, MessageFormat.format(ERROR_ENTITY_NULL, Constants.ENTITY_CUSTOMER));
-
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setAddress(addressDTOConverter.convert(entity.getAddress()));
-        customerDTO.setBalance(entity.getBalance());
-        customerDTO.setDiscount(entity.getDiscount());
-        customerDTO.setEmail(entity.getEmail());
-        customerDTO.setName(entity.getName());
-        customerDTO.setSecondName(entity.getSecondName());
-        customerDTO.setFatherName(entity.getFatherName());
-        customerDTO.setPhone(entity.getPhone());
-        entity.setId(entity.getId());
-        return customerDTO;
+    public Class<CustomerDTO> getDTOType() {
+        return CustomerDTO.class;
     }
 }

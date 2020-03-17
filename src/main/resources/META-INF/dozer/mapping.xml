@@ -119,4 +119,20 @@
             <b>role</b>
         </field>
     </mapping>
+    <mapping>
+        <class-a>com.accenture.flowershop.be.entity.address.Address</class-a>
+        <class-b>com.accenture.flowershop.fe.dto.entity.AddressDTO</class-b>
+    </mapping>
+    <mapping>
+        <class-a>com.accenture.flowershop.be.entity.customer.Customer</class-a>
+        <class-b>com.accenture.flowershop.fe.dto.entity.CustomerDTO</class-b>
+    </mapping>
+    <mapping>
+        <class-a>com.accenture.flowershop.be.entity.order.Order</class-a>
+        <class-b>com.accenture.flowershop.fe.dto.entity.OrderDTO</class-b>
+    </mapping>
+    <mapping>
+        <class-a>com.accenture.flowershop.be.entity.flower.Flower</class-a>
+        <class-b>com.accenture.flowershop.fe.dto.entity.FlowerDTO</class-b>
+    </mapping>
 </mappings>

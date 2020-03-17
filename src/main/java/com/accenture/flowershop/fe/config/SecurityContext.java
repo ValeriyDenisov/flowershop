@@ -35,6 +35,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/registration*").hasRole("ANONYMOUS")
+                .antMatchers("/rest/*").hasAnyAuthority("ADMIN")
                 .anyRequest().permitAll()
                 .and();
 
