@@ -8,6 +8,8 @@ import com.accenture.flowershop.be.api.service.CustomerService;
 import com.accenture.flowershop.be.api.service.OrderService;
 import com.accenture.flowershop.be.entity.customer.Customer;
 import com.accenture.flowershop.be.entity.customer.Customer_;
+import com.accenture.flowershop.be.entity.flower.Flower;
+import com.accenture.flowershop.be.entity.flower.FlowerOrder;
 import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.be.entity.order.Order_;
 import com.accenture.flowershop.be.impl.utils.CommonUtils;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -81,6 +80,18 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, OrderDAO> imple
         });
     }
 
+    @Override
+    public Integer insertOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate, List<FlowerOrder> flowers)
+            throws EntityCreatingException {
+        return insertEntity(getOrderFieldsValues(customer, price, openDate, isActive), () -> {
+            if (isPersist(customer)) {
+                return initOrder(customer, price, isActive, openDate, closeDate, flowers);
+            } else {
+                throw new EntityCreatingException(MessageFormat.format(ERROR_ORDER_CUSTOMER_NOT_PERSISTENCE, customer.toString()));
+            }
+        });
+    }
+
 
     @Override
     public void updateOrder(Integer orderId, Integer customerId, Double price,
@@ -132,7 +143,9 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, OrderDAO> imple
             throw new EntityCreatingException(ex);
         });
 
-        insertOrder(customer, price, true, Calendar.getInstance(), null);
+        Order order = findOrderById(insertOrder(customer, price, true, Calendar.getInstance(), null));
+        order.setFlowersToOrder(getFlowersOrderFromCart(order, cart));
+        updateOrder(order, null, null, null, null, null);
     }
 
     @Override
@@ -146,6 +159,12 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, OrderDAO> imple
 
     private Order initOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate) {
         return new Order.Builder(customer, price, isActive, openDate).closeDate(closeDate).build();
+    }
+
+    private Order initOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate, List<FlowerOrder> flowers) {
+        Order order = initOrder(customer, price, isActive, openDate, closeDate);
+        order.setFlowersToOrder(flowers);
+        return order;
     }
 
     private Map<String, Object> getOrderFieldsValues(Integer customerId, Double price, Calendar openDate, Boolean isActive) {
@@ -190,5 +209,15 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, OrderDAO> imple
             order.setActive(active);
         }
         order.setCloseDate(closeDate);
+    }
+
+    private List<FlowerOrder> getFlowersOrderFromCart(Order order, Cart cart) {
+        List<FlowerOrder> flowersOrder = new ArrayList<>();
+        for (Flower flower: cart.getFlowers().keySet()) {
+            FlowerOrder flowerOrder = new FlowerOrder(flower.getName(), cart.getFlowers().get(flower).getPrice(),
+                    cart.getFlowers().get(flower).getCountToOrder(), flower.getQuantityInStock(), order);
+            flowersOrder.add(flowerOrder);
+        }
+        return flowersOrder;
     }
 }

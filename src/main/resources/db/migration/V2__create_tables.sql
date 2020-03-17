@@ -41,11 +41,23 @@ CREATE TABLE IF NOT EXISTS orders
 CREATE TABLE IF NOT EXISTS flowers
 (
   id int(10) PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) UNIQUE NOT NULL,
   price double NOT NULL,
   quantity_in_stock int(10) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS flowers_order
+(
+  id int(10) PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  total_price double NOT NULL,
+  quantity_in_stock int(10) NOT NULL,
+  count_to_order int(10) NOT NULL,
+  order_id int(10) NOT NULL
 );
 
 ALTER TABLE customers ADD CONSTRAINT fk_customers_addresses FOREIGN KEY (address_id) REFERENCES addresses(id);
 
 ALTER TABLE orders ADD CONSTRAINT fk_orders_customers FOREIGN KEY (customer_id) REFERENCES customers(id);
+
+ALTER TABLE flowers_order ADD CONSTRAINT fk_flowers_order_orders FOREIGN KEY (order_id) REFERENCES orders(id);

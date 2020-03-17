@@ -4,6 +4,7 @@ import com.accenture.flowershop.be.api.exceptions.EntityCreatingException;
 import com.accenture.flowershop.be.api.exceptions.EntityDeletingException;
 import com.accenture.flowershop.be.api.exceptions.EntityUpdatingException;
 import com.accenture.flowershop.be.entity.customer.Customer;
+import com.accenture.flowershop.be.entity.flower.FlowerOrder;
 import com.accenture.flowershop.be.entity.order.Order;
 import com.accenture.flowershop.fe.application.Cart;
 
@@ -18,6 +19,9 @@ public interface OrderService {
             throws EntityCreatingException;
 
     Integer insertOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate)
+            throws EntityCreatingException;
+
+    Integer insertOrder(Customer customer, Double price, Boolean isActive, Calendar openDate, Calendar closeDate, List<FlowerOrder> flowers)
             throws EntityCreatingException;
 
     void updateOrder(Integer orderId, Integer customerId, Double price, Boolean isActive, Calendar openDate, Calendar closeDate)

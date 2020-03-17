@@ -2,6 +2,7 @@ package com.accenture.flowershop.be.entity.order;
 
 import com.accenture.flowershop.be.entity.common.AbstractEntity;
 import com.accenture.flowershop.be.entity.customer.Customer;
+import com.accenture.flowershop.be.entity.flower.FlowerOrder;
 import com.accenture.flowershop.fe.application.Cart;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import java.util.Calendar;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -41,8 +43,19 @@ public class Order extends AbstractEntity {
     @NotNull(message = "Order active is null!")
     private Boolean active;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<FlowerOrder> flowersToOrder;
+
     @Transient
     private Cart cart;
+
+    public List<FlowerOrder> getFlowersToOrder() {
+        return flowersToOrder;
+    }
+
+    public void setFlowersToOrder(List<FlowerOrder> flowersToOrder) {
+        this.flowersToOrder = flowersToOrder;
+    }
 
     public Cart getCart() {
         return cart;

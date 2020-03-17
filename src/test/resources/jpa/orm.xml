@@ -16,4 +16,9 @@
             </id>
         </attributes>
     </mapped-superclass>
+    <entity class="com.accenture.flowershop.be.entity.order.Order">
+        <attributes>
+            <transient name="flowersToOrder"/>
+        </attributes>
+    </entity>
 </entity-mappings>
