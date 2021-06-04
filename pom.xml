@@ -19,7 +19,7 @@
         <mysql-connector-java-version>8.0.19</mysql-connector-java-version>
         <h2-version>1.4.200</h2-version>
         <validation-api>2.0.1.Final</validation-api>
-        <hiberante-validator-version>6.0.18.Final</hiberante-validator-version>
+        <hiberante-validator-version>6.0.20.Final</hiberante-validator-version>
         <commons-collections4>4.0</commons-collections4>
         <flyway-core-version>6.1.3</flyway-core-version>
         <properties-maven-plugin-verison>1.0.0</properties-maven-plugin-verison>
